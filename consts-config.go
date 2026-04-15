@@ -2,6 +2,36 @@ package main
 
 import "github.com/hajimehoshi/ebiten/v2"
 
+// Probability weights for modifier keys (keep int)
+const NoModifiersWeight = 10
+const ControlWeight = 2
+const AltWeight = 2
+const ShiftWeight = 2 //non-printable only
+const MetaWeight = 2
+const ControlAltWeight = 1
+const ControlShiftWeight = 1
+const ControlMetaWeight = 0
+const AltShiftWeight = 1
+const AltMetaWeight = 1
+const ShiftMetaWeight = 0
+const ControlAltShiftWeight = 1
+const ControlAltMetaWeight = 0
+const ControlShiftMetaWeight = 0
+const AltShiftMetaWeight = 0
+const ControlAltShiftMetaWeight = 0
+
+// Probability weights for base rune/key (keep int)
+const LowercaseLettersWeight = 20
+const UppercaseLettersWeight = 10
+const SymbolsWeight = 10
+const NumbersWeight = 10
+const BaseLayerNonPrintableWeight = 10
+const LowerLayerNonPrintableWeight = 5
+const CustomWeight = 0
+
+// Add chars to emphasize to the Custom slice, make CustomWeight non-zero for them to repeat more often.
+var Custom = []rune{}
+
 var USLower = []rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
 var USUpper = []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
 var USSymbols = []rune{
