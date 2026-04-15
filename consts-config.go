@@ -1,5 +1,7 @@
 package main
 
+import "github.com/hajimehoshi/ebiten/v2"
+
 var USLower = []rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
 var USUpper = []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
 
@@ -25,4 +27,20 @@ var RUSymbols = []rune{
 var UASymbols = []rune{
 	'!', '"', '№', ';', '%', ':', '?', '*', '(', ')',
 	'\'', 'ʼ', '-', '_', '=', '+', '.', ',',
+}
+
+var BaseLayerNonPrintableKeys = []ebiten.Key{
+	ebiten.KeyEscape, ebiten.KeyTab, ebiten.KeyCapsLock,
+	ebiten.KeyDelete, ebiten.KeyEnter,
+	ebiten.KeyInsert, ebiten.KeyHome, ebiten.KeyEnd,
+	ebiten.KeyPageUp, ebiten.KeyPageDown,
+	ebiten.KeyArrowUp, ebiten.KeyArrowDown, ebiten.KeyArrowLeft, ebiten.KeyArrowRight,
+}
+
+var LowerLayerNonPrintableKeys = []ebiten.Key{
+	ebiten.KeyF1, ebiten.KeyF2, ebiten.KeyF3, ebiten.KeyF4,
+	ebiten.KeyF5, ebiten.KeyF6, ebiten.KeyF7, ebiten.KeyF8,
+	ebiten.KeyF9, ebiten.KeyF10, ebiten.KeyF11, ebiten.KeyF12,
+	ebiten.KeyF13, ebiten.KeyF14, ebiten.KeyF15, ebiten.KeyF16,
+	ebiten.KeyPrintScreen, ebiten.KeyScrollLock, ebiten.KeyPause,
 }
