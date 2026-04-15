@@ -35,7 +35,8 @@ type KeyCombo struct {
 	Meta    bool
 }
 type Game struct {
-	PressedCombos []KeyCombo
+	InputStream     []KeyCombo
+	GibberishStream []KeyCombo
 }
 
 func (g *Game) Update() error {
@@ -51,7 +52,7 @@ func (g *Game) Update() error {
 			continue
 		}
 		normal, shifted := getRunesFromKey(k)
-		g.PressedCombos = append(g.PressedCombos, KeyCombo{
+		g.InputStream = append(g.InputStream, KeyCombo{
 			Key:         k,
 			NormalRune:  normal,
 			ShiftedRune: shifted,
@@ -63,8 +64,8 @@ func (g *Game) Update() error {
 		})
 	}
 
-	if len(g.PressedCombos) > MaxLen {
-		g.PressedCombos = g.PressedCombos[len(g.PressedCombos)-MaxLen:]
+	if len(g.InputStream) > MaxLen {
+		g.InputStream = g.InputStream[len(g.InputStream)-MaxLen:]
 	}
 
 	return nil
@@ -98,12 +99,16 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	keysString := ""
-	for _, combo := range g.PressedCombos {
-		keysString += getStringFromCombo(combo) + ", "
+	inputStreamString := ""
+	for _, combo := range g.InputStream {
+		inputStreamString += getStringFromCombo(combo) + ", "
 	}
-	text.Draw(screen, keysString, FontFace, 0, FontSize, color.White)
-
+	text.Draw(screen, inputStreamString, FontFace, 0, FontSize, color.White)
+	gibberishStreamString := ""
+	for _, combo := range g.GibberishStream {
+		gibberishStreamString += getStringFromCombo(combo) + ", "
+	}
+	text.Draw(screen, gibberishStreamString, FontFace, 0, FontSize*2, color.White)
 }
 
 func getStringFromCombo(combo KeyCombo) string {
@@ -143,11 +148,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	gibberishStream := generateGibberishStream()
+	game := &Game{GibberishStream: gibberishStream}
+
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")
-	if err := ebiten.RunGame(&Game{}); err != nil {
+
+	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func generateGibberishStream() []KeyCombo {
+	return nil
 }
 
 func getFaceFromPath(path string, size, dpi float64) (font.Face, error) {
