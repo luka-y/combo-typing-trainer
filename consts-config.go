@@ -20,6 +20,28 @@ const ControlShiftMetaWeight = 0
 const AltShiftMetaWeight = 0
 const ControlAltShiftMetaWeight = 0
 
+type ModWeightIndex int
+
+const EmptyModWeightIndex ModWeightIndex = -1
+const (
+	NoModifiersWeightIndex ModWeightIndex = iota
+	ControlWeightIndex
+	AltWeightIndex
+	ShiftWeightIndex
+	MetaWeightIndex
+	ControlAltWeightIndex
+	ControlShiftWeightIndex
+	ControlMetaWeightIndex
+	AltShiftWeightIndex
+	AltMetaWeightIndex
+	ShiftMetaWeightIndex
+	ControlAltShiftWeightIndex
+	ControlAltMetaWeightIndex
+	ControlShiftMetaWeightIndex
+	AltShiftMetaWeightIndex
+	ControlAltShiftMetaWeightIndex
+)
+
 // Probability weights for base rune/key (keep int)
 const LowercaseLettersWeight = 20
 const UppercaseLettersWeight = 10
@@ -28,6 +50,19 @@ const NumbersWeight = 10
 const BaseLayerNonPrintableWeight = 10
 const LowerLayerNonPrintableWeight = 5
 const CustomWeight = 0
+
+type BaseWeightIndex int
+
+const EmptyBaseWeightIndex BaseWeightIndex = -1
+const (
+	LowercaseLettersWeightIndex BaseWeightIndex = iota
+	UppercaseLettersWeightIndex
+	SymbolsWeightIndex
+	NumbersWeightIndex
+	BaseLayerNonPrintableWeightIndex
+	LowerLayerNonPrintableWeightIndex
+	CustomWeightIndex
+)
 
 // Add chars to emphasize to the Custom slice, make CustomWeight non-zero for them to repeat more often.
 var Custom = []rune{}

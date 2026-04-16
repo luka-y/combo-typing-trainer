@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"image/color"
 	"log"
+	"math/rand/v2"
 	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -148,7 +150,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gibberishStream := generateGibberishStream()
+	gibberishStream, err := generateGibberishStream(100)
+	if err != nil {
+		log.Fatal(err)
+	}
 	game := &Game{GibberishStream: gibberishStream}
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
@@ -159,8 +164,102 @@ func main() {
 	}
 }
 
-func generateGibberishStream() []KeyCombo {
-	return nil
+func generateGibberishStream(size int) ([]KeyCombo, error) {
+	baseCumulativeDistribution, err := convertWeightsToCumulativeDistribution([]int{
+		LowercaseLettersWeight,
+		UppercaseLettersWeight,
+		SymbolsWeight,
+		NumbersWeight,
+		BaseLayerNonPrintableWeight,
+		LowerLayerNonPrintableWeight,
+		CustomWeight,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error making cumulative distribution for base rune/key: %w", err)
+	}
+	modifierCumulativeDistribution, err := convertWeightsToCumulativeDistribution([]int{
+		NoModifiersWeight,
+		ControlWeight,
+		AltWeight,
+		ShiftWeight,
+		MetaWeight,
+		ControlAltWeight,
+		ControlShiftWeight,
+		ControlMetaWeight,
+		AltShiftWeight,
+		AltMetaWeight,
+		ShiftMetaWeight,
+		ControlAltShiftWeight,
+		ControlAltMetaWeight,
+		ControlShiftMetaWeight,
+		AltShiftMetaWeight,
+		ControlAltShiftMetaWeight,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("error making cumulative distribution for modifiers: %w", err)
+	}
+
+	res := make([]KeyCombo, size)
+	for i := 0; i < size; i++ {
+		res[i], err = getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution)
+		if err != nil {
+			return nil, fmt.Errorf("error making random combo: %w", err)
+		}
+	}
+	return res, nil
+}
+
+func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution []float64) (KeyCombo, error) {
+	baseIndex := EmptyBaseWeightIndex
+	randFloat := rand.Float64()
+	for i, num := range baseCumulativeDistribution {
+		if num >= randFloat {
+			baseIndex = BaseWeightIndex(i)
+			break
+		}
+	}
+	if baseIndex == EmptyBaseWeightIndex {
+		return KeyCombo{}, fmt.Errorf("impossible error baseIndex")
+	}
+	modIndex := EmptyModWeightIndex
+	randFloat = rand.Float64()
+	for i, num := range modifierCumulativeDistribution {
+		if num >= randFloat {
+			modIndex = ModWeightIndex(i)
+			break
+		}
+	}
+	if modIndex == EmptyModWeightIndex {
+		return KeyCombo{}, fmt.Errorf("impossible error modIndex")
+	}
+
+	//TODO finish
+
+	return KeyCombo{}, nil
+}
+
+func convertWeightsToCumulativeDistribution(inputSlice []int) ([]float64, error) {
+	if len(inputSlice) == 0 {
+		return nil, fmt.Errorf("empty input slice")
+	}
+	weightsSum := 0
+	for _, weight := range inputSlice {
+		if weight < 0 {
+			return nil, fmt.Errorf("input slice included a negative weight")
+		}
+		weightsSum += weight
+	}
+	if weightsSum == 0 {
+		return nil, fmt.Errorf("sum of weight equals zero")
+	}
+	probabilities := make([]float64, len(inputSlice))
+	for i := 0; i < len(inputSlice); i++ {
+		probabilities[i] = float64(inputSlice[i]) / float64(weightsSum)
+		if i > 0 {
+			probabilities[i] += probabilities[i-1]
+		}
+	}
+	return probabilities, nil
 }
 
 func getFaceFromPath(path string, size, dpi float64) (font.Face, error) {
