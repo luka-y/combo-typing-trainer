@@ -301,9 +301,11 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 	case LowerLayerNonPrintableWeightIndex:
 		res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
 	case CustomWeightIndex:
-		err := setKeyComboBasedOnRuneAndLayout(&res, Custom[rand.IntN(len(Custom))])
-		if err != nil {
-			return KeyCombo{}, fmt.Errorf("error with Custom []rune: %w", err)
+		if len(Custom) > 0 {
+			err := setKeyComboBasedOnRuneAndLayout(&res, Custom[rand.IntN(len(Custom))])
+			if err != nil {
+				return KeyCombo{}, fmt.Errorf("error with Custom []rune: %w", err)
+			}
 		}
 	}
 
