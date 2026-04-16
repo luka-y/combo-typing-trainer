@@ -26,6 +26,15 @@ var FontFace font.Face
 
 const MaxLen = 10
 
+var layout Layout //Set on the start of the program, to reset restart the program.
+type Layout int
+
+const (
+	USLayout Layout = iota
+	UALayout
+	RULayout
+)
+
 type KeyCombo struct {
 	Key         ebiten.Key
 	NormalRune  rune
@@ -39,9 +48,16 @@ type KeyCombo struct {
 type Game struct {
 	InputStream     []KeyCombo
 	GibberishStream []KeyCombo
+
+	TickCounter int
 }
 
 func (g *Game) Update() error {
+	if g.TickCounter == 0 {
+		g.FirstUpdateCall()
+	}
+	g.TickCounter++
+
 	justPressedKeys := inpututil.AppendJustPressedKeys([]ebiten.Key{})
 
 	shiftPressed := ebiten.IsKeyPressed(ebiten.KeyShift)
@@ -88,12 +104,12 @@ func isKeyModifierToSkip(key ebiten.Key) bool {
 }
 
 func getRunesFromKey(k ebiten.Key) (rune, rune) {
-	switch ebiten.KeyName(ebiten.KeyS) {
-	case "s":
+	switch layout {
+	case USLayout:
 		return USNormal[k], USShifted[k]
-	case "і":
+	case UALayout:
 		return UANormal[k], UAShifted[k]
-	case "ы":
+	case RULayout:
 		return RUNormal[k], RUShifted[k]
 	}
 	log.Print("getRunesFromKey: unknown layout")
@@ -119,14 +135,14 @@ func getStringFromCombo(combo KeyCombo) string {
 	}
 
 	res := ""
-	if combo.Shift {
-		res += "Shift + "
-	}
 	if combo.Control {
 		res += "Control + "
 	}
 	if combo.Alt {
 		res += "Alt + "
+	}
+	if combo.Shift {
+		res += "Shift + "
 	}
 	if combo.Meta {
 		res += "Meta + "
@@ -143,6 +159,23 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return outsideWidth, outsideHeight
 }
 
+func (g *Game) FirstUpdateCall() {
+	switch ebiten.KeyName(ebiten.KeyS) {
+	case "s":
+		layout = USLayout
+	case "і":
+		layout = UALayout
+	case "ы":
+		layout = RULayout
+	}
+
+	gibberishStream, err := generateGibberishStream(100)
+	if err != nil {
+		log.Fatal(err)
+	}
+	g.GibberishStream = gibberishStream
+}
+
 func main() {
 	var err error
 	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", FontSize, FontDPI)
@@ -150,16 +183,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gibberishStream, err := generateGibberishStream(100)
-	if err != nil {
-		log.Fatal(err)
-	}
-	game := &Game{GibberishStream: gibberishStream}
-
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")
 
-	if err := ebiten.RunGame(game); err != nil {
+	if err := ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -221,6 +248,7 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 	if baseIndex == EmptyBaseWeightIndex {
 		return KeyCombo{}, fmt.Errorf("impossible error baseIndex")
 	}
+
 	modIndex := EmptyModWeightIndex
 	randFloat = rand.Float64()
 	for i, num := range modifierCumulativeDistribution {
@@ -233,9 +261,134 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 		return KeyCombo{}, fmt.Errorf("impossible error modIndex")
 	}
 
-	//TODO finish
+	var res = KeyCombo{}
+	switch baseIndex {
+	case LowercaseLettersWeightIndex:
+		switch layout {
+		case USLayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, USLower[rand.IntN(len(USLower))])
+		case UALayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, UALower[rand.IntN(len(UALower))])
+		case RULayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, RULower[rand.IntN(len(RULower))])
+		}
+	case UppercaseLettersWeightIndex:
+		switch layout {
+		case USLayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, USUpper[rand.IntN(len(USUpper))])
+		case UALayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, UAUpper[rand.IntN(len(UAUpper))])
+		case RULayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, RUUpper[rand.IntN(len(RUUpper))])
+		}
+	case SymbolsWeightIndex:
+		switch layout {
+		case USLayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, USSymbols[rand.IntN(len(USSymbols))])
+		case UALayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, UASymbols[rand.IntN(len(UASymbols))])
+		case RULayout:
+			_ = setKeyComboBasedOnRuneAndLayout(&res, RUSymbols[rand.IntN(len(RUSymbols))])
+		}
+	case NumbersWeightIndex:
+		_ = setKeyComboBasedOnRuneAndLayout(&res, Numbers[rand.IntN(len(Numbers))])
+	case BaseLayerNonPrintableWeightIndex:
+		res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
+	case LowerLayerNonPrintableWeightIndex:
+		res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
+	case CustomWeightIndex:
+		err := setKeyComboBasedOnRuneAndLayout(&res, Custom[rand.IntN(len(Custom))])
+		if err != nil {
+			return KeyCombo{}, fmt.Errorf("error with Custom []rune: %w", err)
+		}
+	}
 
-	return KeyCombo{}, nil
+	switch modIndex {
+	case NoModifiersWeightIndex:
+	case ControlWeightIndex:
+		res.Control = true
+	case AltWeightIndex:
+		res.Alt = true
+	case ShiftWeightIndex:
+		if baseIndex == BaseLayerNonPrintableWeightIndex || baseIndex == LowerLayerNonPrintableWeightIndex {
+			res.Shift = true
+		}
+	case MetaWeightIndex:
+		res.Meta = true
+	case ControlAltWeightIndex:
+		res.Control = true
+		res.Alt = true
+	case ControlShiftWeightIndex:
+		res.Control = true
+		res.Shift = true
+	case ControlMetaWeightIndex:
+		res.Control = true
+		res.Meta = true
+	case AltShiftWeightIndex:
+		res.Alt = true
+		res.Shift = true
+	case AltMetaWeightIndex:
+		res.Alt = true
+		res.Meta = true
+	case ShiftMetaWeightIndex:
+		res.Shift = true
+		res.Meta = true
+	case ControlAltShiftWeightIndex:
+		res.Control = true
+		res.Alt = true
+		res.Shift = true
+	case ControlAltMetaWeightIndex:
+		res.Control = true
+		res.Alt = true
+		res.Meta = true
+	case ControlShiftMetaWeightIndex:
+		res.Control = true
+		res.Shift = true
+		res.Meta = true
+	case AltShiftMetaWeightIndex:
+		res.Alt = true
+		res.Shift = true
+		res.Meta = true
+	case ControlAltShiftMetaWeightIndex:
+		res.Control = true
+		res.Alt = true
+		res.Shift = true
+		res.Meta = true
+	}
+	return res, nil
+}
+
+func setKeyComboBasedOnRuneAndLayout(kc *KeyCombo, r rune) error {
+	switch layout {
+	case USLayout:
+		keyWithShift, exist := USKeyMap[r]
+		if !exist {
+			return fmt.Errorf("no such rune in the USKeyMap: %c", r)
+		}
+		kc.Key = keyWithShift.Key
+		kc.Shift = keyWithShift.Shift
+		kc.NormalRune = USNormal[kc.Key]
+		kc.ShiftedRune = USShifted[kc.Key]
+	case UALayout:
+		keyWithShift, exist := UAKeyMap[r]
+		if !exist {
+			return fmt.Errorf("no such rune in the UAKeyMap: %c", r)
+		}
+		kc.Key = keyWithShift.Key
+		kc.Shift = keyWithShift.Shift
+		kc.NormalRune = UANormal[kc.Key]
+		kc.ShiftedRune = UAShifted[kc.Key]
+	case RULayout:
+		keyWithShift, exist := RUKeyMap[r]
+		if !exist {
+			return fmt.Errorf("no such rune in the RUKeyMap: %c", r)
+		}
+		kc.Key = keyWithShift.Key
+		kc.Shift = keyWithShift.Shift
+		kc.NormalRune = RUNormal[kc.Key]
+		kc.ShiftedRune = RUShifted[kc.Key]
+	}
+	return nil
 }
 
 func convertWeightsToCumulativeDistribution(inputSlice []int) ([]float64, error) {
