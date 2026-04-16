@@ -54,7 +54,8 @@ type Game struct {
 
 func (g *Game) Update() error {
 	if g.TickCounter == 0 {
-		g.FirstUpdateCall()
+		g.TickCounter++
+		return g.FirstUpdateCall()
 	}
 	g.TickCounter++
 
@@ -159,7 +160,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return outsideWidth, outsideHeight
 }
 
-func (g *Game) FirstUpdateCall() {
+func (g *Game) FirstUpdateCall() error {
 	switch ebiten.KeyName(ebiten.KeyS) {
 	case "s":
 		layout = USLayout
@@ -167,13 +168,16 @@ func (g *Game) FirstUpdateCall() {
 		layout = UALayout
 	case "ы":
 		layout = RULayout
+	default:
+		return fmt.Errorf("unknown layout")
 	}
 
 	gibberishStream, err := generateGibberishStream(100)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	g.GibberishStream = gibberishStream
+	return nil
 }
 
 func main() {
