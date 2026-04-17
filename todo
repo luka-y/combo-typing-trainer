@@ -5,10 +5,20 @@ micro to-do:
 
 
 priority 0:
-    make a second random stream
-        string generation
+    adjust the drawing of the text: move printed to the left.
+        sync the streams
+    mark mistakes as red.
+    auto extend the random track if close to end (end should never be visible or out of bound)
 
 priority 2:
+    refactor:
+        get rid of all of these layout switches and repeated maps
+            have just the keys map, generate all other maps and slices to pick from from them
+            have some kind of global struct for the current layout with pointers/values for all maps and slices
+                separate symbols into lower and shifted too
+        take a look at other things, there are a lot of things that feel like they can be reduced in complexity and get
+            more readable at the same time.
+    solve a bit broken probabilities by shift modifier combos.
 
 
 priority 10:

@@ -23,8 +23,7 @@ const FontSize = 16
 const FontDPI = 72
 
 var FontFace font.Face
-
-const MaxLen = 10
+var FontDrawer *font.Drawer
 
 var layout Layout //Set on the start of the program, to reset restart the program.
 type Layout int
@@ -44,10 +43,41 @@ type KeyCombo struct {
 	Control bool
 	Alt     bool
 	Meta    bool
+
+	StrToDraw string
 }
+
+func (kc *KeyCombo) setStringToDraw() {
+	if kc.Shift && !kc.Control && !kc.Alt && !kc.Meta && kc.ShiftedRune != 0 {
+		kc.StrToDraw = string(kc.ShiftedRune)
+		return
+	}
+
+	res := ""
+	if kc.Control {
+		res += "Control + "
+	}
+	if kc.Alt {
+		res += "Alt + "
+	}
+	if kc.Shift {
+		res += "Shift + "
+	}
+	if kc.Meta {
+		res += "Meta + "
+	}
+	if kc.NormalRune != 0 {
+		res += string(kc.NormalRune)
+	} else {
+		res += kc.Key.String()
+	}
+	kc.StrToDraw = res
+}
+
 type Game struct {
 	InputStream     []KeyCombo
 	GibberishStream []KeyCombo
+	PrintWidth      []int
 
 	TickCounter int
 }
@@ -66,12 +96,16 @@ func (g *Game) Update() error {
 	altPressed := ebiten.IsKeyPressed(ebiten.KeyAlt)
 	metaPressed := ebiten.IsKeyPressed(ebiten.KeyMeta)
 
+	var pressedIds []int
 	for _, k := range justPressedKeys {
 		if isKeyModifierToSkip(k) {
 			continue
 		}
+		if k == ebiten.KeyBackspace {
+			continue
+		}
 		normal, shifted := getRunesFromKey(k)
-		g.InputStream = append(g.InputStream, KeyCombo{
+		inputCombo := KeyCombo{
 			Key:         k,
 			NormalRune:  normal,
 			ShiftedRune: shifted,
@@ -80,14 +114,31 @@ func (g *Game) Update() error {
 			Control: controlPressed,
 			Alt:     altPressed,
 			Meta:    metaPressed,
-		})
+		}
+		inputCombo.setStringToDraw()
+		g.InputStream = append(g.InputStream, inputCombo)
+
+		pressedIds = append(pressedIds, len(g.InputStream)-1)
+	}
+	for _, id := range pressedIds {
+		inputWidth := measureStringWidth(g.InputStream[id].StrToDraw)
+		gibberishWidth := measureStringWidth(g.GibberishStream[id].StrToDraw)
+		if inputWidth > gibberishWidth {
+			g.PrintWidth = append(g.PrintWidth, inputWidth)
+		} else {
+			g.PrintWidth = append(g.PrintWidth, gibberishWidth)
+		}
 	}
 
-	if len(g.InputStream) > MaxLen {
-		g.InputStream = g.InputStream[len(g.InputStream)-MaxLen:]
+	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) && len(g.InputStream) > 0 {
+		g.InputStream = g.InputStream[0 : len(g.InputStream)-1]
 	}
 
 	return nil
+}
+
+func measureStringWidth(s string) int {
+	return int(FontDrawer.MeasureString(s) >> 6)
 }
 
 func isKeyModifierToSkip(key ebiten.Key) bool {
@@ -118,42 +169,14 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	inputStreamString := ""
-	for _, combo := range g.InputStream {
-		inputStreamString += getStringFromCombo(combo) + ", "
+	currentPosition := screenWidth / 2
+	for i := len(g.InputStream) - 1; i >= 0; i-- {
+		text.Draw(screen, g.InputStream[i].StrToDraw, FontFace, currentPosition, FontSize, color.White)
+		text.Draw(screen, g.GibberishStream[i].StrToDraw, FontFace, currentPosition, FontSize*2, color.White)
+		if i > 0 {
+			currentPosition -= g.PrintWidth[i-1]
+		}
 	}
-	text.Draw(screen, inputStreamString, FontFace, 0, FontSize, color.White)
-	gibberishStreamString := ""
-	for _, combo := range g.GibberishStream {
-		gibberishStreamString += getStringFromCombo(combo) + ", "
-	}
-	text.Draw(screen, gibberishStreamString, FontFace, 0, FontSize*2, color.White)
-}
-
-func getStringFromCombo(combo KeyCombo) string {
-	if combo.Shift && !combo.Control && !combo.Alt && !combo.Meta && combo.ShiftedRune != 0 {
-		return string(combo.ShiftedRune)
-	}
-
-	res := ""
-	if combo.Control {
-		res += "Control + "
-	}
-	if combo.Alt {
-		res += "Alt + "
-	}
-	if combo.Shift {
-		res += "Shift + "
-	}
-	if combo.Meta {
-		res += "Meta + "
-	}
-	if combo.NormalRune != 0 {
-		res += string(combo.NormalRune)
-	} else {
-		res += combo.Key.String()
-	}
-	return res
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
@@ -186,6 +209,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	FontDrawer = &font.Drawer{Face: FontFace}
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")
@@ -361,6 +385,8 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 		res.Shift = true
 		res.Meta = true
 	}
+
+	res.setStringToDraw()
 	return res, nil
 }
 
