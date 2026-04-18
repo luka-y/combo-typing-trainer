@@ -278,7 +278,8 @@ func setCumulativeDistributions() error {
 		NumbersWeight,
 		BaseLayerNonPrintableWeight,
 		LowerLayerNonPrintableWeight,
-		CustomWeight,
+		CustomCharsWeight,
+		CustomKeysWeight,
 	})
 	if err != nil {
 		return fmt.Errorf("error making cumulative distribution for base rune/key: %w", err)
@@ -368,12 +369,16 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 		res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
 	case LowerLayerNonPrintableWeightIndex:
 		res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
-	case CustomWeightIndex:
-		if len(Custom) > 0 {
-			err := setKeyComboBasedOnRuneAndLayout(&res, Custom[rand.IntN(len(Custom))])
+	case CustomCharsWeightIndex:
+		if len(CustomChars) > 0 {
+			err := setKeyComboBasedOnRuneAndLayout(&res, CustomChars[rand.IntN(len(CustomChars))])
 			if err != nil {
 				return KeyCombo{}, fmt.Errorf("error with Custom []rune: %w", err)
 			}
+		}
+	case CustomKeysWeightIndex:
+		if len(CustomKeys) > 0 {
+			res.Key = CustomKeys[rand.IntN(len(CustomKeys))]
 		}
 	}
 

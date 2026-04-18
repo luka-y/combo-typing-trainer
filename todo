@@ -5,7 +5,6 @@ micro to-do:
 
 
 priority 0:
-    add custom slice for keys
 
 priority 2:
     optimize drawing, make it not go through each thing.

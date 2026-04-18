@@ -49,7 +49,8 @@ const SymbolsWeight = 10
 const NumbersWeight = 10
 const BaseLayerNonPrintableWeight = 10
 const LowerLayerNonPrintableWeight = 5
-const CustomWeight = 0
+const CustomCharsWeight = 0
+const CustomKeysWeight = 0
 
 type BaseWeightIndex int
 
@@ -61,11 +62,13 @@ const (
 	NumbersWeightIndex
 	BaseLayerNonPrintableWeightIndex
 	LowerLayerNonPrintableWeightIndex
-	CustomWeightIndex
+	CustomCharsWeightIndex
+	CustomKeysWeightIndex
 )
 
-// Add chars to emphasize to the Custom slice, make CustomWeight non-zero for them to repeat more often.
-var Custom = []rune{}
+// Add chars to emphasize to the CustomChars slice, make CustomCharsWeight non-zero for them to repeat more often.
+var CustomChars = []rune{}
+var CustomKeys = []ebiten.Key{}
 
 var USLower = []rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
 var USUpper = []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
