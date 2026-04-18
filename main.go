@@ -54,7 +54,7 @@ type KeyCombo struct {
 
 func (kc *KeyCombo) setStringToDraw() {
 	if kc.Shift && !kc.Control && !kc.Alt && !kc.Meta && kc.ShiftedRune != 0 {
-		kc.StrToDraw = string(kc.ShiftedRune) + " "
+		kc.StrToDraw = string(kc.ShiftedRune)
 		return
 	}
 
@@ -76,7 +76,7 @@ func (kc *KeyCombo) setStringToDraw() {
 	} else {
 		res += kc.Key.String()
 	}
-	kc.StrToDraw = res + " "
+	kc.StrToDraw = res
 }
 
 type Game struct {
@@ -177,8 +177,8 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 func (g *Game) Draw(screen *ebiten.Image) {
 	currentScreenXPosition := screenWidth / 2
 	for i := 0; i < len(g.InputStream); i++ {
-		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw)
-		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw)
+		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw + " ")
+		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + " ")
 		if inputWidth < gibberishWidth {
 			currentScreenXPosition -= gibberishWidth
 		} else {
@@ -188,15 +188,15 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	for i := 0; i < len(g.GibberishStream); i++ {
 		if i < len(g.InputStream) {
-			text.Draw(screen, g.InputStream[i].StrToDraw, FontFace, currentScreenXPosition, FontSize, color.White)
+			text.Draw(screen, g.InputStream[i].StrToDraw+" ", FontFace, currentScreenXPosition, FontSize, color.White)
 		}
-		text.Draw(screen, g.GibberishStream[i].StrToDraw, FontFace, currentScreenXPosition, FontSize*2.5, color.White)
+		text.Draw(screen, g.GibberishStream[i].StrToDraw+" ", FontFace, currentScreenXPosition, FontSize*2.5, color.White)
 
 		inputWidth := -1
 		if i < len(g.InputStream) {
-			inputWidth = measureStringWidth(g.InputStream[i].StrToDraw)
+			inputWidth = measureStringWidth(g.InputStream[i].StrToDraw + " ")
 		}
-		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw)
+		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + " ")
 		if inputWidth < gibberishWidth {
 			currentScreenXPosition += gibberishWidth
 		} else {
