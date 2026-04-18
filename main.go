@@ -239,15 +239,15 @@ func (g *Game) FirstUpdateCall() error {
 	}
 
 	err := setCumulativeDistributions()
+	if err != nil {
+		return err
+	}
 	gibberishStream := make([]KeyCombo, GibberishOverInputLen)
 	for i := 0; i < GibberishOverInputLen; i++ {
 		gibberishStream[i], err = getRandomCombo(BaseCumulativeDistribution, ModifierCumulativeDistribution)
 		if err != nil {
 			return fmt.Errorf("error making random combo: %w", err)
 		}
-	}
-	if err != nil {
-		return err
 	}
 	g.GibberishStream = gibberishStream
 	return nil
@@ -260,6 +260,13 @@ func main() {
 		log.Fatal(err)
 	}
 	FontDrawer = &font.Drawer{Face: FontFace}
+
+	if CustomKeysWeight > 0 && len(CustomKeys) == 0 {
+		log.Fatal("config error: non-zero CustomKeysWeight while CustomKeys's len is 0")
+	}
+	if CustomCharsWeight > 0 && len(CustomChars) == 0 {
+		log.Fatal("config error: non-zero CustomCharsWeight while CustomChars's len is 0")
+	}
 
 	ebiten.SetWindowSize(screenWidth, screenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")

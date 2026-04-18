@@ -68,6 +68,8 @@ const (
 
 // Add chars to emphasize to the CustomChars slice, make CustomCharsWeight non-zero for them to repeat more often.
 var CustomChars = []rune{}
+
+// Same, but for keys. Add only keys from BaseLayerNonPrintableKeys or LowerLayerNonPrintableKeys. You would not be able to type Shift, Control, Alt, Meta, or Backspace. If key correspond to a character, add a char to CustomChars instead.
 var CustomKeys = []ebiten.Key{}
 
 var USLower = []rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
