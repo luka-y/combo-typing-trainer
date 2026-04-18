@@ -54,7 +54,7 @@ type KeyCombo struct {
 
 func (kc *KeyCombo) setStringToDraw() {
 	if kc.Shift && !kc.Control && !kc.Alt && !kc.Meta && kc.ShiftedRune != 0 {
-		kc.StrToDraw = string(kc.ShiftedRune)
+		kc.StrToDraw = string(kc.ShiftedRune) + " "
 		return
 	}
 
@@ -76,7 +76,7 @@ func (kc *KeyCombo) setStringToDraw() {
 	} else {
 		res += kc.Key.String()
 	}
-	kc.StrToDraw = res
+	kc.StrToDraw = res + " "
 }
 
 type Game struct {
