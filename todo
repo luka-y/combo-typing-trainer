@@ -18,6 +18,9 @@ priority 2:
             more readable at the same time.
     solve a bit broken probabilities by shift modifier combos.
     clean up main.go, move everything to its own files.
+    make so consts-config has only things that are actually supposed to be changed by the user (move from main, move from there somewhere)
+        OR maybe do some kind of config file and do it like a normal human being.
+    test if it works on windows
 priority 10:
 
 

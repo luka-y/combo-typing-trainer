@@ -14,8 +14,8 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-const screenWidth = 1600
-const screenHeight = FontSize * 2
+const ScreenWidth = 1920
+const ScreenHeight = 50
 
 const GibberishOverInputLen = 100
 
@@ -28,10 +28,14 @@ const FontDPI = 72
 var FontFace font.Face
 var FontDrawer *font.Drawer
 
+var BackgroundColor = color.RGBA{0, 0, 0, 255}
 var UpcomingComboColor = color.RGBA{150, 150, 150, 255}
 var CurrentComboColor = color.RGBA{255, 255, 255, 255}
 var CorrectPastComboColor = color.RGBA{150, 255, 150, 255}
 var IncorrectPastComboColor = color.RGBA{255, 150, 150, 255}
+
+var GibberishYPos int
+var InputYPos int
 
 var layout Layout //Set on the start of the program, to reset restart the program.
 type Layout int
@@ -178,9 +182,11 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	screen.Fill(BackgroundColor)
+
 	spaceBetweenCombos := "  "
 
-	currentScreenXPosition := screenWidth / 2
+	currentScreenXPosition := ScreenWidth / 2
 	for i := 0; i < len(g.InputStream); i++ {
 		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw + spaceBetweenCombos)
 		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + spaceBetweenCombos)
@@ -205,9 +211,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 
 		if i < len(g.InputStream) {
-			text.Draw(screen, g.InputStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, FontSize, inputColor)
+			text.Draw(screen, g.InputStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, InputYPos, inputColor)
 		}
-		text.Draw(screen, g.GibberishStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, FontSize*2.5, gibberishColor)
+		text.Draw(screen, g.GibberishStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, GibberishYPos, gibberishColor)
 
 		inputWidth := -1
 		if i < len(g.InputStream) {
@@ -261,6 +267,9 @@ func main() {
 	}
 	FontDrawer = &font.Drawer{Face: FontFace}
 
+	InputYPos = FontSize + 2
+	GibberishYPos = ScreenHeight - int(FontFace.Metrics().Descent.Ceil()) - 2
+
 	if CustomKeysWeight > 0 && len(CustomKeys) == 0 {
 		log.Fatal("config error: non-zero CustomKeysWeight while CustomKeys's len is 0")
 	}
@@ -268,7 +277,7 @@ func main() {
 		log.Fatal("config error: non-zero CustomCharsWeight while CustomChars's len is 0")
 	}
 
-	ebiten.SetWindowSize(screenWidth, screenHeight)
+	ebiten.SetWindowSize(ScreenWidth, ScreenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")
 
 	if err := ebiten.RunGame(&Game{}); err != nil {
