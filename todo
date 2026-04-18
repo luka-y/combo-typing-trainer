@@ -5,8 +5,8 @@ micro to-do:
 
 
 priority 0:
-    adjust the drawing of the text: move printed to the left.
-        sync the streams
+    optimize drawing
+
     mark mistakes as red.
     wait. How I saw space in generation, it is not in consts anywhere.
         add space as a separate thing.

@@ -175,17 +175,32 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	currentPosition := screenWidth / 2
-	for i := len(g.InputStream) - 1; i >= 0; i-- {
-		text.Draw(screen, g.InputStream[i].StrToDraw, FontFace, currentPosition, FontSize, color.White)
-		text.Draw(screen, g.GibberishStream[i].StrToDraw, FontFace, currentPosition, FontSize*2, color.White)
-
+	currentScreenXPosition := screenWidth / 2
+	for i := 0; i < len(g.InputStream); i++ {
 		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw)
 		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw)
-		if inputWidth > gibberishWidth {
-			currentPosition += inputWidth
+		if inputWidth < gibberishWidth {
+			currentScreenXPosition -= gibberishWidth
 		} else {
-			currentPosition += gibberishWidth
+			currentScreenXPosition -= inputWidth
+		}
+	}
+
+	for i := 0; i < len(g.GibberishStream); i++ {
+		if i < len(g.InputStream) {
+			text.Draw(screen, g.InputStream[i].StrToDraw, FontFace, currentScreenXPosition, FontSize, color.White)
+		}
+		text.Draw(screen, g.GibberishStream[i].StrToDraw, FontFace, currentScreenXPosition, FontSize*2.5, color.White)
+
+		inputWidth := -1
+		if i < len(g.InputStream) {
+			inputWidth = measureStringWidth(g.InputStream[i].StrToDraw)
+		}
+		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw)
+		if inputWidth < gibberishWidth {
+			currentScreenXPosition += gibberishWidth
+		} else {
+			currentScreenXPosition += inputWidth
 		}
 	}
 }
