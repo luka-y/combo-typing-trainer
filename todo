@@ -5,12 +5,8 @@ micro to-do:
 
 
 priority 0:
-    mark current combo.
-    mark mistakes as red.
-    make modifiers vertical, so they don't take as much space.
-    (maybe) add some clearer borders to each combo.
-    wait. How I saw space in generation, it is not in consts anywhere.
-        add space as a separate thing.
+    add space as a key
+    add custom slice for keys
 
 priority 2:
     optimize drawing, make it not go through each thing.

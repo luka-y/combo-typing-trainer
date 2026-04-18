@@ -14,10 +14,8 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-const (
-	screenWidth  = 1600
-	screenHeight = 900
-)
+const screenWidth = 1600
+const screenHeight = FontSize * 2
 
 const GibberishOverInputLen = 100
 
@@ -29,6 +27,11 @@ const FontDPI = 72
 
 var FontFace font.Face
 var FontDrawer *font.Drawer
+
+var UpcomingComboColor = color.RGBA{150, 150, 150, 255}
+var CurrentComboColor = color.RGBA{255, 255, 255, 255}
+var CorrectPastComboColor = color.RGBA{150, 255, 150, 255}
+var IncorrectPastComboColor = color.RGBA{255, 150, 150, 255}
 
 var layout Layout //Set on the start of the program, to reset restart the program.
 type Layout int
@@ -60,16 +63,16 @@ func (kc *KeyCombo) setStringToDraw() {
 
 	res := ""
 	if kc.Control {
-		res += "Control + "
+		res += "Control+"
 	}
 	if kc.Alt {
-		res += "Alt + "
+		res += "Alt+"
 	}
 	if kc.Shift {
-		res += "Shift + "
+		res += "Shift+"
 	}
 	if kc.Meta {
-		res += "Meta + "
+		res += "Meta+"
 	}
 	if kc.NormalRune != 0 {
 		res += string(kc.NormalRune)
@@ -175,10 +178,12 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	spaceBetweenCombos := "  "
+
 	currentScreenXPosition := screenWidth / 2
 	for i := 0; i < len(g.InputStream); i++ {
-		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw + " ")
-		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + " ")
+		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw + spaceBetweenCombos)
+		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + spaceBetweenCombos)
 		if inputWidth < gibberishWidth {
 			currentScreenXPosition -= gibberishWidth
 		} else {
@@ -187,16 +192,28 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	for i := 0; i < len(g.GibberishStream); i++ {
-		if i < len(g.InputStream) {
-			text.Draw(screen, g.InputStream[i].StrToDraw+" ", FontFace, currentScreenXPosition, FontSize, color.White)
+		inputColor, gibberishColor := UpcomingComboColor, UpcomingComboColor
+		if i == len(g.InputStream) {
+			gibberishColor = CurrentComboColor
 		}
-		text.Draw(screen, g.GibberishStream[i].StrToDraw+" ", FontFace, currentScreenXPosition, FontSize*2.5, color.White)
+		if i < len(g.InputStream) {
+			if g.GibberishStream[i] == g.InputStream[i] {
+				inputColor, gibberishColor = CorrectPastComboColor, CorrectPastComboColor
+			} else {
+				inputColor, gibberishColor = IncorrectPastComboColor, IncorrectPastComboColor
+			}
+		}
+
+		if i < len(g.InputStream) {
+			text.Draw(screen, g.InputStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, FontSize, inputColor)
+		}
+		text.Draw(screen, g.GibberishStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, FontSize*2.5, gibberishColor)
 
 		inputWidth := -1
 		if i < len(g.InputStream) {
-			inputWidth = measureStringWidth(g.InputStream[i].StrToDraw + " ")
+			inputWidth = measureStringWidth(g.InputStream[i].StrToDraw + spaceBetweenCombos)
 		}
-		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + " ")
+		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw + spaceBetweenCombos)
 		if inputWidth < gibberishWidth {
 			currentScreenXPosition += gibberishWidth
 		} else {
