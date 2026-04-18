@@ -8,7 +8,8 @@ priority 0:
     adjust the drawing of the text: move printed to the left.
         sync the streams
     mark mistakes as red.
-    auto extend the random track if close to end (end should never be visible or out of bound)
+    wait. How I saw space in generation, it is not in consts anywhere.
+        add space as a separate thing.
 
 priority 2:
     refactor:

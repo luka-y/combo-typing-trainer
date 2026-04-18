@@ -19,6 +19,11 @@ const (
 	screenHeight = 900
 )
 
+const GibberishOverInputLen = 100
+
+var BaseCumulativeDistribution []float64
+var ModifierCumulativeDistribution []float64
+
 const FontSize = 16
 const FontDPI = 72
 
@@ -77,7 +82,6 @@ func (kc *KeyCombo) setStringToDraw() {
 type Game struct {
 	InputStream     []KeyCombo
 	GibberishStream []KeyCombo
-	PrintWidth      []int
 
 	TickCounter int
 }
@@ -120,13 +124,15 @@ func (g *Game) Update() error {
 
 		pressedIds = append(pressedIds, len(g.InputStream)-1)
 	}
-	for _, id := range pressedIds {
-		inputWidth := measureStringWidth(g.InputStream[id].StrToDraw)
-		gibberishWidth := measureStringWidth(g.GibberishStream[id].StrToDraw)
-		if inputWidth > gibberishWidth {
-			g.PrintWidth = append(g.PrintWidth, inputWidth)
-		} else {
-			g.PrintWidth = append(g.PrintWidth, gibberishWidth)
+
+	lenDiff := len(g.GibberishStream) - len(g.InputStream)
+	if lenDiff < GibberishOverInputLen {
+		for i := 0; i < GibberishOverInputLen-lenDiff; i++ {
+			randomCombo, err := getRandomCombo(BaseCumulativeDistribution, ModifierCumulativeDistribution)
+			if err != nil {
+				return fmt.Errorf("err with getRandomCombo in Update: %w", err)
+			}
+			g.GibberishStream = append(g.GibberishStream, randomCombo)
 		}
 	}
 
@@ -173,8 +179,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for i := len(g.InputStream) - 1; i >= 0; i-- {
 		text.Draw(screen, g.InputStream[i].StrToDraw, FontFace, currentPosition, FontSize, color.White)
 		text.Draw(screen, g.GibberishStream[i].StrToDraw, FontFace, currentPosition, FontSize*2, color.White)
-		if i > 0 {
-			currentPosition -= g.PrintWidth[i-1]
+
+		inputWidth := measureStringWidth(g.InputStream[i].StrToDraw)
+		gibberishWidth := measureStringWidth(g.GibberishStream[i].StrToDraw)
+		if inputWidth > gibberishWidth {
+			currentPosition += inputWidth
+		} else {
+			currentPosition += gibberishWidth
 		}
 	}
 }
@@ -195,7 +206,14 @@ func (g *Game) FirstUpdateCall() error {
 		return fmt.Errorf("unknown layout")
 	}
 
-	gibberishStream, err := generateGibberishStream(100)
+	err := setCumulativeDistributions()
+	gibberishStream := make([]KeyCombo, GibberishOverInputLen)
+	for i := 0; i < GibberishOverInputLen; i++ {
+		gibberishStream[i], err = getRandomCombo(BaseCumulativeDistribution, ModifierCumulativeDistribution)
+		if err != nil {
+			return fmt.Errorf("error making random combo: %w", err)
+		}
+	}
 	if err != nil {
 		return err
 	}
@@ -219,8 +237,9 @@ func main() {
 	}
 }
 
-func generateGibberishStream(size int) ([]KeyCombo, error) {
-	baseCumulativeDistribution, err := convertWeightsToCumulativeDistribution([]int{
+func setCumulativeDistributions() error {
+	var err error
+	BaseCumulativeDistribution, err = convertWeightsToCumulativeDistribution([]int{
 		LowercaseLettersWeight,
 		UppercaseLettersWeight,
 		SymbolsWeight,
@@ -230,9 +249,9 @@ func generateGibberishStream(size int) ([]KeyCombo, error) {
 		CustomWeight,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error making cumulative distribution for base rune/key: %w", err)
+		return fmt.Errorf("error making cumulative distribution for base rune/key: %w", err)
 	}
-	modifierCumulativeDistribution, err := convertWeightsToCumulativeDistribution([]int{
+	ModifierCumulativeDistribution, err = convertWeightsToCumulativeDistribution([]int{
 		NoModifiersWeight,
 		ControlWeight,
 		AltWeight,
@@ -251,17 +270,10 @@ func generateGibberishStream(size int) ([]KeyCombo, error) {
 		ControlAltShiftMetaWeight,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("error making cumulative distribution for modifiers: %w", err)
+		return fmt.Errorf("error making cumulative distribution for modifiers: %w", err)
 	}
 
-	res := make([]KeyCombo, size)
-	for i := 0; i < size; i++ {
-		res[i], err = getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution)
-		if err != nil {
-			return nil, fmt.Errorf("error making random combo: %w", err)
-		}
-	}
-	return res, nil
+	return nil
 }
 
 func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution []float64) (KeyCombo, error) {
