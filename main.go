@@ -28,11 +28,11 @@ const FontDPI = 72
 var FontFace font.Face
 var FontDrawer *font.Drawer
 
-var BackgroundColor = color.RGBA{0, 0, 0, 255}
-var UpcomingComboColor = color.RGBA{150, 150, 150, 255}
-var CurrentComboColor = color.RGBA{255, 255, 255, 255}
-var CorrectPastComboColor = color.RGBA{150, 255, 150, 255}
-var IncorrectPastComboColor = color.RGBA{255, 150, 150, 255}
+var BackgroundColor = color.RGBA{24, 22, 22, 255}
+var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
+var CurrentComboColor = color.RGBA{196, 178, 138, 255}
+var CorrectPastComboColor = color.RGBA{138, 154, 123, 255}
+var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
 
 var GibberishYPos int
 var InputYPos int
