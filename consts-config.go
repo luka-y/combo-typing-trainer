@@ -81,7 +81,7 @@ var Numbers = []rune{'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'}
 
 var BaseLayerNonPrintableKeys = []ebiten.Key{
 	ebiten.KeyEscape, ebiten.KeyTab, ebiten.KeyCapsLock,
-	ebiten.KeyDelete, ebiten.KeyEnter,
+	ebiten.KeyDelete, ebiten.KeyEnter, ebiten.KeySpace,
 	ebiten.KeyInsert, ebiten.KeyHome, ebiten.KeyEnd,
 	ebiten.KeyPageUp, ebiten.KeyPageDown,
 	ebiten.KeyArrowUp, ebiten.KeyArrowDown, ebiten.KeyArrowLeft, ebiten.KeyArrowRight,

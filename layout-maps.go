@@ -24,7 +24,6 @@ var USNormal = map[ebiten.Key]rune{
 	ebiten.KeyBackslash: '\\', ebiten.KeySemicolon: ';',
 	ebiten.KeyQuote: '\'', ebiten.KeyBackquote: '`',
 	ebiten.KeyComma: ',', ebiten.KeyPeriod: '.', ebiten.KeySlash: '/',
-	ebiten.KeySpace: ' ',
 }
 
 var USShifted = map[ebiten.Key]rune{
@@ -44,7 +43,6 @@ var USShifted = map[ebiten.Key]rune{
 	ebiten.KeyBackslash: '|', ebiten.KeySemicolon: ':',
 	ebiten.KeyQuote: '"', ebiten.KeyBackquote: '~',
 	ebiten.KeyComma: '<', ebiten.KeyPeriod: '>', ebiten.KeySlash: '?',
-	ebiten.KeySpace: ' ',
 }
 
 var RUNormal = map[ebiten.Key]rune{
@@ -64,7 +62,6 @@ var RUNormal = map[ebiten.Key]rune{
 	ebiten.KeyBackslash: '\\', ebiten.KeySemicolon: 'ж',
 	ebiten.KeyQuote: 'э', ebiten.KeyBackquote: 'ё',
 	ebiten.KeyComma: 'б', ebiten.KeyPeriod: 'ю', ebiten.KeySlash: '.',
-	ebiten.KeySpace: ' ',
 }
 
 var RUShifted = map[ebiten.Key]rune{
@@ -84,7 +81,6 @@ var RUShifted = map[ebiten.Key]rune{
 	ebiten.KeyBackslash: '/', ebiten.KeySemicolon: 'Ж',
 	ebiten.KeyQuote: 'Э', ebiten.KeyBackquote: 'Ё',
 	ebiten.KeyComma: 'Б', ebiten.KeyPeriod: 'Ю', ebiten.KeySlash: ',',
-	ebiten.KeySpace: ' ',
 }
 
 var UANormal = map[ebiten.Key]rune{
@@ -104,7 +100,6 @@ var UANormal = map[ebiten.Key]rune{
 	ebiten.KeyBackslash: 'ґ', ebiten.KeySemicolon: 'ж',
 	ebiten.KeyQuote: 'є', ebiten.KeyBackquote: '\'',
 	ebiten.KeyComma: 'б', ebiten.KeyPeriod: 'ю', ebiten.KeySlash: '.',
-	ebiten.KeySpace: ' ',
 }
 
 var UAShifted = map[ebiten.Key]rune{
@@ -124,7 +119,6 @@ var UAShifted = map[ebiten.Key]rune{
 	ebiten.KeyBackslash: 'Ґ', ebiten.KeySemicolon: 'Ж',
 	ebiten.KeyQuote: 'Є', ebiten.KeyBackquote: 'ʼ',
 	ebiten.KeyComma: 'Б', ebiten.KeyPeriod: 'Ю', ebiten.KeySlash: ',',
-	ebiten.KeySpace: ' ',
 }
 
 var USKeyMap = map[rune]KeyWithShift{
@@ -161,7 +155,6 @@ var USKeyMap = map[rune]KeyWithShift{
 	',': {Key: ebiten.KeyComma, Shift: false}, '<': {Key: ebiten.KeyComma, Shift: true},
 	'.': {Key: ebiten.KeyPeriod, Shift: false}, '>': {Key: ebiten.KeyPeriod, Shift: true},
 	'/': {Key: ebiten.KeySlash, Shift: false}, '?': {Key: ebiten.KeySlash, Shift: true},
-	' ': {Key: ebiten.KeySpace, Shift: false},
 }
 
 var RUKeyMap = map[rune]KeyWithShift{
@@ -198,7 +191,6 @@ var RUKeyMap = map[rune]KeyWithShift{
 	'б': {Key: ebiten.KeyComma, Shift: false}, 'Б': {Key: ebiten.KeyComma, Shift: true},
 	'ю': {Key: ebiten.KeyPeriod, Shift: false}, 'Ю': {Key: ebiten.KeyPeriod, Shift: true},
 	'.': {Key: ebiten.KeySlash, Shift: false}, ',': {Key: ebiten.KeySlash, Shift: true},
-	' ': {Key: ebiten.KeySpace, Shift: false},
 }
 
 var UAKeyMap = map[rune]KeyWithShift{
@@ -235,5 +227,4 @@ var UAKeyMap = map[rune]KeyWithShift{
 	'б': {Key: ebiten.KeyComma, Shift: false}, 'Б': {Key: ebiten.KeyComma, Shift: true},
 	'ю': {Key: ebiten.KeyPeriod, Shift: false}, 'Ю': {Key: ebiten.KeyPeriod, Shift: true},
 	'.': {Key: ebiten.KeySlash, Shift: false}, ',': {Key: ebiten.KeySlash, Shift: true},
-	' ': {Key: ebiten.KeySpace, Shift: false},
 }
