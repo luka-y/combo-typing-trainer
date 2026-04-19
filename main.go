@@ -90,6 +90,8 @@ type Game struct {
 	InputStream     []KeyCombo
 	GibberishStream []KeyCombo
 
+	ScreenImg *ebiten.Image
+
 	TickCounter int
 }
 
@@ -99,6 +101,8 @@ func (g *Game) Update() error {
 		return g.FirstUpdateCall()
 	}
 	g.TickCounter++
+
+	changeThisFrame := false
 
 	justPressedKeys := inpututil.AppendJustPressedKeys([]ebiten.Key{})
 
@@ -115,6 +119,7 @@ func (g *Game) Update() error {
 		if k == ebiten.KeyBackspace {
 			continue
 		}
+		changeThisFrame = true
 		normal, shifted := getRunesFromKey(k)
 		inputCombo := KeyCombo{
 			Key:         k,
@@ -134,6 +139,7 @@ func (g *Game) Update() error {
 
 	lenDiff := len(g.GibberishStream) - len(g.InputStream)
 	if lenDiff < GibberishOverInputLen {
+		changeThisFrame = true
 		for i := 0; i < GibberishOverInputLen-lenDiff; i++ {
 			randomCombo, err := getRandomCombo(BaseCumulativeDistribution, ModifierCumulativeDistribution)
 			if err != nil {
@@ -144,7 +150,12 @@ func (g *Game) Update() error {
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) && len(g.InputStream) > 0 {
+		changeThisFrame = true
 		g.InputStream = g.InputStream[0 : len(g.InputStream)-1]
+	}
+
+	if changeThisFrame {
+		g.UpdateScreenImg()
 	}
 
 	return nil
@@ -182,7 +193,12 @@ func getRunesFromKey(k ebiten.Key) (rune, rune) {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(BackgroundColor)
+	screen.DrawImage(g.ScreenImg, &ebiten.DrawImageOptions{})
+}
+
+func (g *Game) UpdateScreenImg() {
+	g.ScreenImg = ebiten.NewImage(ScreenWidth, ScreenHeight)
+	g.ScreenImg.Fill(BackgroundColor)
 
 	spaceBetweenCombos := "  "
 
@@ -211,9 +227,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 
 		if i < len(g.InputStream) {
-			text.Draw(screen, g.InputStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, InputYPos, inputColor)
+			text.Draw(g.ScreenImg, g.InputStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, InputYPos, inputColor)
 		}
-		text.Draw(screen, g.GibberishStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, GibberishYPos, gibberishColor)
+		text.Draw(g.ScreenImg, g.GibberishStream[i].StrToDraw+spaceBetweenCombos, FontFace, currentScreenXPosition, GibberishYPos, gibberishColor)
 
 		inputWidth := -1
 		if i < len(g.InputStream) {
@@ -256,6 +272,8 @@ func (g *Game) FirstUpdateCall() error {
 		}
 	}
 	g.GibberishStream = gibberishStream
+
+	g.UpdateScreenImg()
 	return nil
 }
 

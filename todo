@@ -7,8 +7,9 @@ micro to-do:
 priority 0:
 
 priority 2:
-    optimize drawing, make it not go through each thing.
-        just make an image and move an image, not redo it in the most inefficient way possible 180 times a sec (?)
+    optimize drawing
+        have screen image global var, update it only on change, not every draw call.
+        trim both steams when too far from the current character
     refactor:
         get rid of all of these layout switches and repeated maps
             have just the keys map, generate all other maps and slices to pick from from them
