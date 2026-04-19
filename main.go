@@ -205,7 +205,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) UpdateScreenImg() {
-	g.ScreenImg = ebiten.NewImage(ScreenWidth, ScreenHeight)
+	if g.ScreenImg == nil {
+		g.ScreenImg = ebiten.NewImage(ScreenWidth, ScreenHeight)
+	}
 	g.ScreenImg.Fill(BackgroundColor)
 
 	spaceBetweenCombos := "  "
