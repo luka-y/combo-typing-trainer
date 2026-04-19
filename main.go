@@ -17,7 +17,8 @@ import (
 const ScreenWidth = 1920
 const ScreenHeight = 50
 
-const GibberishOverInputLen = 100
+const TrimDistanceBeforeCurrent = 100
+const GenerateGibberishDistanceAfterCurrent = 100
 
 var BaseCumulativeDistribution []float64
 var ModifierCumulativeDistribution []float64
@@ -138,9 +139,9 @@ func (g *Game) Update() error {
 	}
 
 	lenDiff := len(g.GibberishStream) - len(g.InputStream)
-	if lenDiff < GibberishOverInputLen {
+	if lenDiff < GenerateGibberishDistanceAfterCurrent {
 		changeThisFrame = true
-		for i := 0; i < GibberishOverInputLen-lenDiff; i++ {
+		for i := 0; i < GenerateGibberishDistanceAfterCurrent-lenDiff; i++ {
 			randomCombo, err := getRandomCombo(BaseCumulativeDistribution, ModifierCumulativeDistribution)
 			if err != nil {
 				return fmt.Errorf("err with getRandomCombo in Update: %w", err)
@@ -152,6 +153,13 @@ func (g *Game) Update() error {
 	if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) && len(g.InputStream) > 0 {
 		changeThisFrame = true
 		g.InputStream = g.InputStream[0 : len(g.InputStream)-1]
+	}
+
+	if len(g.InputStream) > TrimDistanceBeforeCurrent {
+		changeThisFrame = true
+		diff := len(g.InputStream) - TrimDistanceBeforeCurrent
+		g.InputStream = g.InputStream[diff:]
+		g.GibberishStream = g.GibberishStream[diff:]
 	}
 
 	if changeThisFrame {
@@ -264,8 +272,8 @@ func (g *Game) FirstUpdateCall() error {
 	if err != nil {
 		return err
 	}
-	gibberishStream := make([]KeyCombo, GibberishOverInputLen)
-	for i := 0; i < GibberishOverInputLen; i++ {
+	gibberishStream := make([]KeyCombo, GenerateGibberishDistanceAfterCurrent)
+	for i := 0; i < GenerateGibberishDistanceAfterCurrent; i++ {
 		gibberishStream[i], err = getRandomCombo(BaseCumulativeDistribution, ModifierCumulativeDistribution)
 		if err != nil {
 			return fmt.Errorf("error making random combo: %w", err)
