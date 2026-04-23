@@ -5,20 +5,20 @@ micro to-do:
 
 
 priority 0:
+    refactor to simplify by introducing/removing new types
+        for each layout have only keymap, everything else make based on it on the startup.
+            separate symbols on base and shifted
+        solve mess with layout by introducing new type.
+        make so I don't have to have those index enums.
+    extract everything I will have in the config to a separate file
+    make config read functionality on startup
+        that keymap per layout can be in config too. layout selection in config too
+    check if all good with probabilities and if they make sense.
+    clean up everything else, separate everything to own files.
+    test if all works on windows
 
 priority 2:
-    refactor:
-        get rid of all of these layout switches and repeated maps
-            have just the keys map, generate all other maps and slices to pick from from them
-            have some kind of global struct for the current layout with pointers/values for all maps and slices
-                separate symbols into lower and shifted too
-        take a look at other things, there are a lot of things that feel like they can be reduced in complexity and get
-            more readable at the same time.
-    solve a bit broken probabilities by shift modifier combos.
-    clean up main.go, move everything to its own files.
-    make so consts-config has only things that are actually supposed to be changed by the user (move from main, move from there somewhere)
-        OR maybe do some kind of config file and do it like a normal human being.
-    test if it works on windows
+
 priority 10:
 
 
