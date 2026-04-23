@@ -1,6 +1,11 @@
 package main
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"log"
+	"unicode"
+
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type KeyWithShift struct {
 	Key   ebiten.Key
@@ -15,13 +20,70 @@ type Layout struct {
 
 	LowerLetters []rune
 	UpperLetters []rune
-	Numbers      []rune
+	Digits       []rune
 	LowerSymbols []rune
 	UpperSymbols []rune
 }
 
-func init() {
+const CurrentLayoutName = "US"
 
+var Layouts []Layout
+var CurrentLayout Layout
+
+func init() {
+	Layouts = append(Layouts, GetLayoutFromKeyMap("US", ActualUSKeyMap))
+	Layouts = append(Layouts, GetLayoutFromKeyMap("RU", ActualRUKeyMap))
+	Layouts = append(Layouts, GetLayoutFromKeyMap("UA", ActualUAKeyMap))
+
+	for _, l := range Layouts {
+		if l.Name == CurrentLayoutName {
+			CurrentLayout = l
+		}
+	}
+	if CurrentLayout.Name == "" {
+		if CurrentLayoutName == "" {
+			log.Fatal("no layout is set")
+		}
+		log.Fatalf("no such layout: %s", CurrentLayoutName)
+	}
+}
+
+func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) Layout {
+	res := Layout{}
+	res.Name = name
+	res.KeyMap = keyMap
+
+	reverseKeyMap := make(map[rune]KeyWithShift)
+	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
+
+	for keyWithShift, r := range keyMap {
+		reverseKeyMap[r] = keyWithShift
+
+		shifted := keyWithShift.Shift
+		if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && !shifted {
+			lowerLetters = append(lowerLetters, r)
+		} else if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && shifted {
+			upperLetters = append(upperLetters, r)
+		} else if unicode.IsDigit(r) {
+			digits = append(digits, r)
+		} else {
+			if !shifted {
+				lowerSymbols = append(lowerSymbols, r)
+			}
+			if shifted {
+				upperSymbols = append(upperSymbols, r)
+			}
+		}
+	}
+
+	res.ReverseKeyMap = reverseKeyMap
+	res.LowerLetters = lowerLetters
+	res.UpperLetters = upperLetters
+	res.Digits = digits
+	res.LowerSymbols = lowerSymbols
+	res.UpperSymbols = upperSymbols
+
+	return res
 }
 
 var ActualUSKeyMap = map[KeyWithShift]rune{
