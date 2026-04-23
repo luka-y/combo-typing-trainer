@@ -38,15 +38,6 @@ var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
 var GibberishYPos int
 var InputYPos int
 
-var layout Layout //Set on the start of the program, to reset restart the program.
-type Layout int
-
-const (
-	USLayout Layout = iota
-	UALayout
-	RULayout
-)
-
 type KeyCombo struct {
 	Key         ebiten.Key
 	NormalRune  rune
