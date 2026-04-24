@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"unicode"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -30,10 +30,22 @@ const CurrentLayoutName = "US"
 var Layouts []Layout
 var CurrentLayout Layout
 
-func InitLayout() {
-	Layouts = append(Layouts, GetLayoutFromKeyMap("US", ActualUSKeyMap))
-	Layouts = append(Layouts, GetLayoutFromKeyMap("RU", ActualRUKeyMap))
-	Layouts = append(Layouts, GetLayoutFromKeyMap("UA", ActualUAKeyMap))
+func InitLayout() error {
+	usLayout, err := GetLayoutFromKeyMap("US", InputUSKeyMap)
+	if err != nil {
+		return fmt.Errorf("err getting layout from the US key map: %w", err)
+	}
+	Layouts = append(Layouts, usLayout)
+	ruLayout, err := GetLayoutFromKeyMap("RU", InputRUKeyMap)
+	if err != nil {
+		return fmt.Errorf("err getting layout from the RU key map: %w", err)
+	}
+	Layouts = append(Layouts, ruLayout)
+	uaLayout, err := GetLayoutFromKeyMap("UA", InputUAKeyMap)
+	if err != nil {
+		return fmt.Errorf("err getting layout from the UA key map: %w", err)
+	}
+	Layouts = append(Layouts, uaLayout)
 
 	for _, l := range Layouts {
 		if l.Name == CurrentLayoutName {
@@ -42,13 +54,21 @@ func InitLayout() {
 	}
 	if CurrentLayout.Name == "" {
 		if CurrentLayoutName == "" {
-			log.Fatal("no layout is set")
+			return fmt.Errorf("no layout is set")
 		}
-		log.Fatalf("no such layout: %s", CurrentLayoutName)
+		return fmt.Errorf("no such layout: %s", CurrentLayoutName)
 	}
+
+	for _, r := range CustomChars {
+		_, exist := CurrentLayout.ReverseKeyMap[r]
+		if !exist {
+			return fmt.Errorf("custom layout contains a char '%c' that is absent in the current layout", r)
+		}
+	}
+	return nil
 }
 
-func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) Layout {
+func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, error) {
 	res := Layout{}
 	res.Name = name
 	res.KeyMap = keyMap
@@ -57,6 +77,9 @@ func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) Layout {
 	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
 
 	for keyWithShift, r := range keyMap {
+		if _, alreadyExist := reverseKeyMap[r]; alreadyExist {
+			return Layout{}, fmt.Errorf("duplicate rune in the input layout map")
+		}
 		reverseKeyMap[r] = keyWithShift
 
 		shifted := keyWithShift.Shift
@@ -83,10 +106,10 @@ func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) Layout {
 	res.LowerSymbols = lowerSymbols
 	res.UpperSymbols = upperSymbols
 
-	return res
+	return res, nil
 }
 
-var ActualUSKeyMap = map[KeyWithShift]rune{
+var InputUSKeyMap = map[KeyWithShift]rune{
 	{Key: ebiten.KeyA, Shift: false}: 'a', {Key: ebiten.KeyA, Shift: true}: 'A',
 	{Key: ebiten.KeyB, Shift: false}: 'b', {Key: ebiten.KeyB, Shift: true}: 'B',
 	{Key: ebiten.KeyC, Shift: false}: 'c', {Key: ebiten.KeyC, Shift: true}: 'C',
@@ -136,7 +159,7 @@ var ActualUSKeyMap = map[KeyWithShift]rune{
 	{Key: ebiten.KeySlash, Shift: false}: '/', {Key: ebiten.KeySlash, Shift: true}: '?',
 }
 
-var ActualRUKeyMap = map[KeyWithShift]rune{
+var InputRUKeyMap = map[KeyWithShift]rune{
 	{Key: ebiten.KeyA, Shift: false}: 'ф', {Key: ebiten.KeyA, Shift: true}: 'Ф',
 	{Key: ebiten.KeyB, Shift: false}: 'и', {Key: ebiten.KeyB, Shift: true}: 'И',
 	{Key: ebiten.KeyC, Shift: false}: 'с', {Key: ebiten.KeyC, Shift: true}: 'С',
@@ -186,7 +209,7 @@ var ActualRUKeyMap = map[KeyWithShift]rune{
 	{Key: ebiten.KeySlash, Shift: false}: '.', {Key: ebiten.KeySlash, Shift: true}: ',',
 }
 
-var ActualUAKeyMap = map[KeyWithShift]rune{
+var InputUAKeyMap = map[KeyWithShift]rune{
 	{Key: ebiten.KeyA, Shift: false}: 'ф', {Key: ebiten.KeyA, Shift: true}: 'Ф',
 	{Key: ebiten.KeyB, Shift: false}: 'и', {Key: ebiten.KeyB, Shift: true}: 'И',
 	{Key: ebiten.KeyC, Shift: false}: 'с', {Key: ebiten.KeyC, Shift: true}: 'С',

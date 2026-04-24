@@ -3,7 +3,7 @@ package main
 import "github.com/hajimehoshi/ebiten/v2"
 
 // Probability weights for modifier keys (keep int)
-const NoModifiersWeight = 10
+const NoModifiersWeight = 25
 const ControlWeight = 2
 const AltWeight = 2
 const ShiftWeight = 2 //non-printable only

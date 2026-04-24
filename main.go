@@ -255,9 +255,11 @@ func (g *Game) FirstUpdateCall() error {
 }
 
 func main() {
-	InitLayout()
+	err := InitLayout()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	var err error
 	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", FontSize, FontDPI)
 	if err != nil {
 		log.Fatal(err)
@@ -351,25 +353,36 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 	var res = KeyCombo{}
 	switch baseIndex {
 	case LowerLettersWeightIndex:
-		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
+		if len(CurrentLayout.LowerLetters) > 0 {
+			res.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
+		}
 	case UpperLettersWeightIndex:
-		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
+		if len(CurrentLayout.UpperLetters) > 0 {
+			res.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
+		}
 	case LowerSymbolsWeightIndex:
-		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
+		if len(CurrentLayout.LowerSymbols) > 0 {
+			res.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
+		}
 	case UpperSymbolsWeightIndex:
-		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
+		if len(CurrentLayout.UpperSymbols) > 0 {
+			res.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
+		}
 	case DigitsWeightIndex:
-		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
+		if len(CurrentLayout.Digits) > 0 {
+			res.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
+		}
 	case BaseLayerNonPrintableWeightIndex:
-		res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
+		if len(BaseLayerNonPrintableKeys) > 0 {
+			res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
+		}
 	case LowerLayerNonPrintableWeightIndex:
-		res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
+		if len(LowerLayerNonPrintableKeys) > 0 {
+			res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
+		}
 	case CustomCharsWeightIndex:
 		if len(CustomChars) > 0 {
-			err := setKeyComboBasedOnRuneAndLayout(&res, CustomChars[rand.IntN(len(CustomChars))])
-			if err != nil {
-				return KeyCombo{}, fmt.Errorf("error with Custom []rune: %w", err)
-			}
+			res.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
 		}
 	case CustomKeysWeightIndex:
 		if len(CustomKeys) > 0 {
@@ -434,16 +447,12 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 	return res, nil
 }
 
-func setKeyComboBasedOnRuneAndLayout(kc *KeyCombo, r rune) error {
-	keyWithShift, exist := CurrentLayout.ReverseKeyMap[r]
-	if !exist {
-		return fmt.Errorf("no such rune in the %s layout: %c", CurrentLayoutName, r)
-	}
+func (kc *KeyCombo) setKeyComboBasedOnRune(r rune) {
+	keyWithShift := CurrentLayout.ReverseKeyMap[r]
 	kc.Key = keyWithShift.Key
 	kc.Shift = keyWithShift.Shift
 	kc.LowerRune = CurrentLayout.KeyMap[KeyWithShift{kc.Key, false}]
 	kc.UpperRune = CurrentLayout.KeyMap[KeyWithShift{kc.Key, true}]
-	return nil
 }
 
 func convertWeightsToCumulativeDistribution(inputSlice []int) ([]float64, error) {
