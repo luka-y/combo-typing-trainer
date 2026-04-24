@@ -43,10 +43,11 @@ const (
 )
 
 // Probability weights for base rune/key (keep int)
-const LowercaseLettersWeight = 20
-const UppercaseLettersWeight = 10
-const SymbolsWeight = 10
-const NumbersWeight = 10
+const LowerLettersWeight = 20
+const UpperLettersWeight = 10
+const LowerSymbolsWeight = 10
+const UpperSymbolsWeight = 10
+const DigitsWeight = 10
 const BaseLayerNonPrintableWeight = 10
 const LowerLayerNonPrintableWeight = 5
 const CustomCharsWeight = 0
@@ -56,10 +57,11 @@ type BaseWeightIndex int
 
 const EmptyBaseWeightIndex BaseWeightIndex = -1
 const (
-	LowercaseLettersWeightIndex BaseWeightIndex = iota
-	UppercaseLettersWeightIndex
-	SymbolsWeightIndex
-	NumbersWeightIndex
+	LowerLettersWeightIndex BaseWeightIndex = iota
+	UpperLettersWeightIndex
+	LowerSymbolsWeightIndex
+	UpperSymbolsWeightIndex
+	DigitsWeightIndex
 	BaseLayerNonPrintableWeightIndex
 	LowerLayerNonPrintableWeightIndex
 	CustomCharsWeightIndex

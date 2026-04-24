@@ -39,9 +39,9 @@ var GibberishYPos int
 var InputYPos int
 
 type KeyCombo struct {
-	Key         ebiten.Key
-	NormalRune  rune
-	ShiftedRune rune
+	Key       ebiten.Key
+	LowerRune rune
+	UpperRune rune
 
 	Shift   bool
 	Control bool
@@ -52,8 +52,8 @@ type KeyCombo struct {
 }
 
 func (kc *KeyCombo) setStringToDraw() {
-	if kc.Shift && !kc.Control && !kc.Alt && !kc.Meta && kc.ShiftedRune != 0 {
-		kc.StrToDraw = string(kc.ShiftedRune)
+	if kc.Shift && !kc.Control && !kc.Alt && !kc.Meta && kc.UpperRune != 0 {
+		kc.StrToDraw = string(kc.UpperRune)
 		return
 	}
 
@@ -70,8 +70,8 @@ func (kc *KeyCombo) setStringToDraw() {
 	if kc.Meta {
 		res += "Meta+"
 	}
-	if kc.NormalRune != 0 {
-		res += string(kc.NormalRune)
+	if kc.LowerRune != 0 {
+		res += string(kc.LowerRune)
 	} else {
 		res += kc.Key.String()
 	}
@@ -112,11 +112,11 @@ func (g *Game) Update() error {
 			continue
 		}
 		changeThisFrame = true
-		normal, shifted := getRunesFromKey(k)
+		normal, shifted := CurrentLayout.KeyMap[KeyWithShift{k, false}], CurrentLayout.KeyMap[KeyWithShift{k, true}]
 		inputCombo := KeyCombo{
-			Key:         k,
-			NormalRune:  normal,
-			ShiftedRune: shifted,
+			Key:       k,
+			LowerRune: normal,
+			UpperRune: shifted,
 
 			Shift:   shiftPressed,
 			Control: controlPressed,
@@ -178,19 +178,6 @@ func isKeyModifierToSkip(key ebiten.Key) bool {
 	return false
 }
 
-func getRunesFromKey(k ebiten.Key) (rune, rune) {
-	switch layout {
-	case USLayout:
-		return USNormal[k], USShifted[k]
-	case UALayout:
-		return UANormal[k], UAShifted[k]
-	case RULayout:
-		return RUNormal[k], RUShifted[k]
-	}
-	log.Print("getRunesFromKey: unknown layout")
-	return 0, 0
-}
-
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(g.ScreenImg, &ebiten.DrawImageOptions{})
 }
@@ -250,17 +237,6 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 }
 
 func (g *Game) FirstUpdateCall() error {
-	switch ebiten.KeyName(ebiten.KeyS) {
-	case "s":
-		layout = USLayout
-	case "і":
-		layout = UALayout
-	case "ы":
-		layout = RULayout
-	default:
-		return fmt.Errorf("unknown layout")
-	}
-
 	err := setCumulativeDistributions()
 	if err != nil {
 		return err
@@ -279,6 +255,8 @@ func (g *Game) FirstUpdateCall() error {
 }
 
 func main() {
+	InitLayout()
+
 	var err error
 	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", FontSize, FontDPI)
 	if err != nil {
@@ -307,10 +285,11 @@ func main() {
 func setCumulativeDistributions() error {
 	var err error
 	BaseCumulativeDistribution, err = convertWeightsToCumulativeDistribution([]int{
-		LowercaseLettersWeight,
-		UppercaseLettersWeight,
-		SymbolsWeight,
-		NumbersWeight,
+		LowerLettersWeight,
+		UpperLettersWeight,
+		LowerSymbolsWeight,
+		UpperSymbolsWeight,
+		DigitsWeight,
 		BaseLayerNonPrintableWeight,
 		LowerLayerNonPrintableWeight,
 		CustomCharsWeight,
@@ -371,35 +350,16 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 
 	var res = KeyCombo{}
 	switch baseIndex {
-	case LowercaseLettersWeightIndex:
-		switch layout {
-		case USLayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, USLower[rand.IntN(len(USLower))])
-		case UALayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, UALower[rand.IntN(len(UALower))])
-		case RULayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, RULower[rand.IntN(len(RULower))])
-		}
-	case UppercaseLettersWeightIndex:
-		switch layout {
-		case USLayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, USUpper[rand.IntN(len(USUpper))])
-		case UALayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, UAUpper[rand.IntN(len(UAUpper))])
-		case RULayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, RUUpper[rand.IntN(len(RUUpper))])
-		}
-	case SymbolsWeightIndex:
-		switch layout {
-		case USLayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, USSymbols[rand.IntN(len(USSymbols))])
-		case UALayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, UASymbols[rand.IntN(len(UASymbols))])
-		case RULayout:
-			_ = setKeyComboBasedOnRuneAndLayout(&res, RUSymbols[rand.IntN(len(RUSymbols))])
-		}
-	case NumbersWeightIndex:
-		_ = setKeyComboBasedOnRuneAndLayout(&res, Numbers[rand.IntN(len(Numbers))])
+	case LowerLettersWeightIndex:
+		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
+	case UpperLettersWeightIndex:
+		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
+	case LowerSymbolsWeightIndex:
+		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
+	case UpperSymbolsWeightIndex:
+		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
+	case DigitsWeightIndex:
+		_ = setKeyComboBasedOnRuneAndLayout(&res, CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
 	case BaseLayerNonPrintableWeightIndex:
 		res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
 	case LowerLayerNonPrintableWeightIndex:
@@ -475,35 +435,14 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 }
 
 func setKeyComboBasedOnRuneAndLayout(kc *KeyCombo, r rune) error {
-	switch layout {
-	case USLayout:
-		keyWithShift, exist := USKeyMap[r]
-		if !exist {
-			return fmt.Errorf("no such rune in the USKeyMap: %c", r)
-		}
-		kc.Key = keyWithShift.Key
-		kc.Shift = keyWithShift.Shift
-		kc.NormalRune = USNormal[kc.Key]
-		kc.ShiftedRune = USShifted[kc.Key]
-	case UALayout:
-		keyWithShift, exist := UAKeyMap[r]
-		if !exist {
-			return fmt.Errorf("no such rune in the UAKeyMap: %c", r)
-		}
-		kc.Key = keyWithShift.Key
-		kc.Shift = keyWithShift.Shift
-		kc.NormalRune = UANormal[kc.Key]
-		kc.ShiftedRune = UAShifted[kc.Key]
-	case RULayout:
-		keyWithShift, exist := RUKeyMap[r]
-		if !exist {
-			return fmt.Errorf("no such rune in the RUKeyMap: %c", r)
-		}
-		kc.Key = keyWithShift.Key
-		kc.Shift = keyWithShift.Shift
-		kc.NormalRune = RUNormal[kc.Key]
-		kc.ShiftedRune = RUShifted[kc.Key]
+	keyWithShift, exist := CurrentLayout.ReverseKeyMap[r]
+	if !exist {
+		return fmt.Errorf("no such rune in the %s layout: %c", CurrentLayoutName, r)
 	}
+	kc.Key = keyWithShift.Key
+	kc.Shift = keyWithShift.Shift
+	kc.LowerRune = CurrentLayout.KeyMap[KeyWithShift{kc.Key, false}]
+	kc.UpperRune = CurrentLayout.KeyMap[KeyWithShift{kc.Key, true}]
 	return nil
 }
 

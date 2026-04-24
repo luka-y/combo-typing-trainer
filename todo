@@ -6,9 +6,6 @@ micro to-do:
 
 priority 0:
     refactor to simplify by introducing/removing new types
-        for each layout have only keymap, everything else make based on it on the startup.
-            separate symbols on base and shifted
-        solve mess with layout by introducing new type.
         make so I don't have to have those index enums.
     extract everything I will have in the config to a separate file
     make config read functionality on startup
