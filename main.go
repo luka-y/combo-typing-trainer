@@ -269,17 +269,10 @@ func main() {
 	InputYPos = FontSize + 2
 	GibberishYPos = ScreenHeight - int(FontFace.Metrics().Descent.Ceil()) - 2
 
-	if CustomKeysWeight > 0 && len(CustomKeys) == 0 {
-		log.Fatal("config error: non-zero CustomKeysWeight while CustomKeys's len is 0")
-	}
-	if CustomCharsWeight > 0 && len(CustomChars) == 0 {
-		log.Fatal("config error: non-zero CustomCharsWeight while CustomChars's len is 0")
-	}
-
 	ebiten.SetWindowSize(ScreenWidth, ScreenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")
 
-	if err := ebiten.RunGame(&Game{}); err != nil {
+	if err = ebiten.RunGame(&Game{}); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -353,41 +346,23 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 	var res = KeyCombo{}
 	switch baseIndex {
 	case LowerLettersWeightIndex:
-		if len(CurrentLayout.LowerLetters) > 0 {
-			res.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
-		}
+		res.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
 	case UpperLettersWeightIndex:
-		if len(CurrentLayout.UpperLetters) > 0 {
-			res.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
-		}
+		res.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
 	case LowerSymbolsWeightIndex:
-		if len(CurrentLayout.LowerSymbols) > 0 {
-			res.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
-		}
+		res.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
 	case UpperSymbolsWeightIndex:
-		if len(CurrentLayout.UpperSymbols) > 0 {
-			res.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
-		}
+		res.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
 	case DigitsWeightIndex:
-		if len(CurrentLayout.Digits) > 0 {
-			res.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
-		}
+		res.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
 	case BaseLayerNonPrintableWeightIndex:
-		if len(BaseLayerNonPrintableKeys) > 0 {
-			res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
-		}
+		res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
 	case LowerLayerNonPrintableWeightIndex:
-		if len(LowerLayerNonPrintableKeys) > 0 {
-			res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
-		}
+		res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
 	case CustomCharsWeightIndex:
-		if len(CustomChars) > 0 {
-			res.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
-		}
+		res.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
 	case CustomKeysWeightIndex:
-		if len(CustomKeys) > 0 {
-			res.Key = CustomKeys[rand.IntN(len(CustomKeys))]
-		}
+		res.Key = CustomKeys[rand.IntN(len(CustomKeys))]
 	}
 
 	switch modIndex {
