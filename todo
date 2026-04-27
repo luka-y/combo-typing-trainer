@@ -5,8 +5,8 @@ micro to-do:
 
 
 priority 0:
-    refactor to simplify by introducing/removing new types
-        make so I don't have to have those index enums.
+    take a look at how much time getCombo and drawing takes. See if there is any actual need to optimize (for priority 2)
+
     extract everything I will have in the config to a separate file
     make config read functionality on startup
         that keymap per layout can be in config too. layout selection in config too

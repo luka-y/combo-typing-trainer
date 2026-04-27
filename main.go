@@ -279,38 +279,21 @@ func main() {
 
 func setCumulativeDistributions() error {
 	var err error
-	BaseCumulativeDistribution, err = convertWeightsToCumulativeDistribution([]int{
-		LowerLettersWeight,
-		UpperLettersWeight,
-		LowerSymbolsWeight,
-		UpperSymbolsWeight,
-		DigitsWeight,
-		BaseLayerNonPrintableWeight,
-		LowerLayerNonPrintableWeight,
-		CustomCharsWeight,
-		CustomKeysWeight,
-	})
+
+	baseWeights := make([]int, len(BaseCategories))
+	for i, bc := range BaseCategories {
+		baseWeights[i] = bc.Weight
+	}
+	BaseCumulativeDistribution, err = convertWeightsToCumulativeDistribution(baseWeights)
 	if err != nil {
 		return fmt.Errorf("error making cumulative distribution for base rune/key: %w", err)
 	}
-	ModifierCumulativeDistribution, err = convertWeightsToCumulativeDistribution([]int{
-		NoModifiersWeight,
-		ControlWeight,
-		AltWeight,
-		ShiftWeight,
-		MetaWeight,
-		ControlAltWeight,
-		ControlShiftWeight,
-		ControlMetaWeight,
-		AltShiftWeight,
-		AltMetaWeight,
-		ShiftMetaWeight,
-		ControlAltShiftWeight,
-		ControlAltMetaWeight,
-		ControlShiftMetaWeight,
-		AltShiftMetaWeight,
-		ControlAltShiftMetaWeight,
-	})
+
+	modWeights := make([]int, len(ModCategories))
+	for i, mc := range ModCategories {
+		modWeights[i] = mc.Weight
+	}
+	ModifierCumulativeDistribution, err = convertWeightsToCumulativeDistribution(modWeights)
 	if err != nil {
 		return fmt.Errorf("error making cumulative distribution for modifiers: %w", err)
 	}
@@ -319,103 +302,32 @@ func setCumulativeDistributions() error {
 }
 
 func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution []float64) (KeyCombo, error) {
-	baseIndex := EmptyBaseWeightIndex
+	var res = KeyCombo{}
+
+	finalBaseCategory := BaseCategory{}
 	randFloat := rand.Float64()
 	for i, num := range baseCumulativeDistribution {
 		if num >= randFloat {
-			baseIndex = BaseWeightIndex(i)
+			finalBaseCategory = BaseCategories[i]
 			break
 		}
 	}
-	if baseIndex == EmptyBaseWeightIndex {
-		return KeyCombo{}, fmt.Errorf("impossible error baseIndex")
+	err := finalBaseCategory.Handler(&res)
+	if err != nil {
+		return KeyCombo{}, fmt.Errorf("base category error: %w", err)
 	}
 
-	modIndex := EmptyModWeightIndex
+	finalModCategory := ModCategory{}
 	randFloat = rand.Float64()
 	for i, num := range modifierCumulativeDistribution {
 		if num >= randFloat {
-			modIndex = ModWeightIndex(i)
+			finalModCategory = ModCategories[i]
 			break
 		}
 	}
-	if modIndex == EmptyModWeightIndex {
-		return KeyCombo{}, fmt.Errorf("impossible error modIndex")
-	}
-
-	var res = KeyCombo{}
-	switch baseIndex {
-	case LowerLettersWeightIndex:
-		res.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
-	case UpperLettersWeightIndex:
-		res.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
-	case LowerSymbolsWeightIndex:
-		res.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
-	case UpperSymbolsWeightIndex:
-		res.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
-	case DigitsWeightIndex:
-		res.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
-	case BaseLayerNonPrintableWeightIndex:
-		res.Key = BaseLayerNonPrintableKeys[rand.IntN(len(BaseLayerNonPrintableKeys))]
-	case LowerLayerNonPrintableWeightIndex:
-		res.Key = LowerLayerNonPrintableKeys[rand.IntN(len(LowerLayerNonPrintableKeys))]
-	case CustomCharsWeightIndex:
-		res.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
-	case CustomKeysWeightIndex:
-		res.Key = CustomKeys[rand.IntN(len(CustomKeys))]
-	}
-
-	switch modIndex {
-	case NoModifiersWeightIndex:
-	case ControlWeightIndex:
-		res.Control = true
-	case AltWeightIndex:
-		res.Alt = true
-	case ShiftWeightIndex:
-		if baseIndex == BaseLayerNonPrintableWeightIndex || baseIndex == LowerLayerNonPrintableWeightIndex {
-			res.Shift = true
-		}
-	case MetaWeightIndex:
-		res.Meta = true
-	case ControlAltWeightIndex:
-		res.Control = true
-		res.Alt = true
-	case ControlShiftWeightIndex:
-		res.Control = true
-		res.Shift = true
-	case ControlMetaWeightIndex:
-		res.Control = true
-		res.Meta = true
-	case AltShiftWeightIndex:
-		res.Alt = true
-		res.Shift = true
-	case AltMetaWeightIndex:
-		res.Alt = true
-		res.Meta = true
-	case ShiftMetaWeightIndex:
-		res.Shift = true
-		res.Meta = true
-	case ControlAltShiftWeightIndex:
-		res.Control = true
-		res.Alt = true
-		res.Shift = true
-	case ControlAltMetaWeightIndex:
-		res.Control = true
-		res.Alt = true
-		res.Meta = true
-	case ControlShiftMetaWeightIndex:
-		res.Control = true
-		res.Shift = true
-		res.Meta = true
-	case AltShiftMetaWeightIndex:
-		res.Alt = true
-		res.Shift = true
-		res.Meta = true
-	case ControlAltShiftMetaWeightIndex:
-		res.Control = true
-		res.Alt = true
-		res.Shift = true
-		res.Meta = true
+	err = finalModCategory.Handler(&res)
+	if err != nil {
+		return KeyCombo{}, fmt.Errorf("mod category error: %w", err)
 	}
 
 	res.setStringToDraw()
@@ -451,6 +363,7 @@ func convertWeightsToCumulativeDistribution(inputSlice []int) ([]float64, error)
 			probabilities[i] += probabilities[i-1]
 		}
 	}
+	probabilities[len(probabilities)-1] = 1
 	return probabilities, nil
 }
 

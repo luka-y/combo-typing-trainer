@@ -66,32 +66,10 @@ func InitLayout() error {
 		}
 	}
 
-	if LowerLettersWeight > 0 && len(CurrentLayout.LowerLetters) == 0 {
-		return fmt.Errorf("config error: non-zero LowerLettersWeight while current layout has no lower letters")
-	}
-	if UpperLettersWeight > 0 && len(CurrentLayout.UpperLetters) == 0 {
-		return fmt.Errorf("config error: non-zero UpperLettersWeight while current layout has no upper letters")
-	}
-	if LowerSymbolsWeight > 0 && len(CurrentLayout.LowerSymbols) == 0 {
-		return fmt.Errorf("config error: non-zero LowerSymbolsWeight while current layout has no lower symbols")
-	}
-	if UpperSymbolsWeight > 0 && len(CurrentLayout.UpperSymbols) == 0 {
-		return fmt.Errorf("config error: non-zero UpperSymbolsWeight while current layout has no upper symbols")
-	}
-	if DigitsWeight > 0 && len(CurrentLayout.Digits) == 0 {
-		return fmt.Errorf("config error: non-zero DigitsWeight while current layout has no digits")
-	}
-	if BaseLayerNonPrintableWeight > 0 && len(BaseLayerNonPrintableKeys) == 0 {
-		return fmt.Errorf("config error: non-zero BaseLayerNonPrintableWeight while BaseLayerNonPrintableKeys's len is 0")
-	}
-	if LowerLayerNonPrintableWeight > 0 && len(LowerLayerNonPrintableKeys) == 0 {
-		return fmt.Errorf("config error: non-zero LowerLayerNonPrintableWeight while LowerLayerNonPrintableKeys's len is 0")
-	}
-	if CustomCharsWeight > 0 && len(CustomChars) == 0 {
-		return fmt.Errorf("config error: non-zero CustomCharsWeight while CustomChars's len is 0")
-	}
-	if CustomKeysWeight > 0 && len(CustomKeys) == 0 {
-		return fmt.Errorf("config error: non-zero CustomKeysWeight while CustomKeys's len is 0")
+	for _, category := range BaseCategories {
+		if category.Weight > 0 && !category.Validator() {
+			return fmt.Errorf("config error: base category \"%s\" weigh is more than zero while slice it is pulling from is empty", category.Name)
+		}
 	}
 	return nil
 }
