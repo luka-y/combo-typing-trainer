@@ -5,16 +5,25 @@ micro to-do:
 
 
 priority 0:
-    take a look at how much time getCombo and drawing takes. See if there is any actual need to optimize (for priority 2)
+    finish with to-move-to-config
+        extract all weights
+        layout: more universal, so you can add any layout with a name and a map. So if you provide a string for a name and
+            a map[KeyWithShift]rune that is valid, you will just add that layout to Layouts slice automatically.
+    check if all good with probabilities and if they make sense
+    overwrite ScreenWidth if UseDefaultScreenWidth is true
+    calculate ScreenHeight based on the font size. Remove that hardcoded 2 for InputYPos and GibberishYPos maybe.
 
-    extract everything I will have in the config to a separate file
-    make config read functionality on startup
-        that keymap per layout can be in config too. layout selection in config too
-    check if all good with probabilities and if they make sense.
-    clean up everything else, separate everything to own files.
+    make config
+
+    extract everything from just main to own files (refactor)
     test if all works on windows
 
 priority 2:
+
+priority 5:
+    run profiler to see if getCombo or drawing (or anything else) needs optimization.
+    make an ability to select font in config. get it from the system, instead of from the asset (?)
+    make TrimDistanceBeforeCurrent and GenerateGibberishDistanceAfterCurrent calculated on startup based on screen width and face.
 
 priority 10:
 

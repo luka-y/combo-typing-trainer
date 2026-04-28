@@ -1,119 +1,44 @@
 package main
 
 import (
-	"fmt"
-	"unicode"
+	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type KeyWithShift struct {
-	Key   ebiten.Key
-	Shift bool
+const UseDefaultScreenWidth = true
+
+var ScreenWidth = 1920
+
+const FontSize = 16
+
+var BackgroundColor = color.RGBA{24, 22, 22, 255}
+var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
+var CurrentComboColor = color.RGBA{196, 178, 138, 255}
+var CorrectPastComboColor = color.RGBA{138, 154, 123, 255}
+var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
+
+var CustomChars = []rune{}
+
+var CustomKeys = []ebiten.Key{}
+
+var NonPrintableKeys1 = []ebiten.Key{
+	ebiten.KeyEscape, ebiten.KeyTab, ebiten.KeyCapsLock,
+	ebiten.KeyDelete, ebiten.KeyEnter, ebiten.KeySpace,
+	ebiten.KeyInsert, ebiten.KeyHome, ebiten.KeyEnd,
+	ebiten.KeyPageUp, ebiten.KeyPageDown,
+	ebiten.KeyArrowUp, ebiten.KeyArrowDown, ebiten.KeyArrowLeft, ebiten.KeyArrowRight,
 }
 
-type Layout struct {
-	Name   string
-	KeyMap map[KeyWithShift]rune
-
-	ReverseKeyMap map[rune]KeyWithShift
-
-	LowerLetters []rune
-	UpperLetters []rune
-	Digits       []rune
-	LowerSymbols []rune
-	UpperSymbols []rune
+var NonPrintableKeys2 = []ebiten.Key{
+	ebiten.KeyF1, ebiten.KeyF2, ebiten.KeyF3, ebiten.KeyF4,
+	ebiten.KeyF5, ebiten.KeyF6, ebiten.KeyF7, ebiten.KeyF8,
+	ebiten.KeyF9, ebiten.KeyF10, ebiten.KeyF11, ebiten.KeyF12,
+	ebiten.KeyF13, ebiten.KeyF14, ebiten.KeyF15, ebiten.KeyF16,
+	ebiten.KeyPrintScreen, ebiten.KeyScrollLock, ebiten.KeyPause,
 }
 
 const CurrentLayoutName = "US"
-
-var Layouts []Layout
-var CurrentLayout Layout
-
-func InitLayout() error {
-	usLayout, err := GetLayoutFromKeyMap("US", InputUSKeyMap)
-	if err != nil {
-		return fmt.Errorf("err getting layout from the US key map: %w", err)
-	}
-	Layouts = append(Layouts, usLayout)
-	ruLayout, err := GetLayoutFromKeyMap("RU", InputRUKeyMap)
-	if err != nil {
-		return fmt.Errorf("err getting layout from the RU key map: %w", err)
-	}
-	Layouts = append(Layouts, ruLayout)
-	uaLayout, err := GetLayoutFromKeyMap("UA", InputUAKeyMap)
-	if err != nil {
-		return fmt.Errorf("err getting layout from the UA key map: %w", err)
-	}
-	Layouts = append(Layouts, uaLayout)
-
-	for _, l := range Layouts {
-		if l.Name == CurrentLayoutName {
-			CurrentLayout = l
-		}
-	}
-	if CurrentLayout.Name == "" {
-		if CurrentLayoutName == "" {
-			return fmt.Errorf("no layout is set")
-		}
-		return fmt.Errorf("no such layout: %s", CurrentLayoutName)
-	}
-
-	for _, r := range CustomChars {
-		_, exist := CurrentLayout.ReverseKeyMap[r]
-		if !exist {
-			return fmt.Errorf("custom layout contains a char '%c' that is absent in the current layout", r)
-		}
-	}
-
-	for _, category := range BaseCategories {
-		if category.Weight > 0 && !category.Validator() {
-			return fmt.Errorf("config error: base category \"%s\" weigh is more than zero while slice it is pulling from is empty", category.Name)
-		}
-	}
-	return nil
-}
-
-func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, error) {
-	res := Layout{}
-	res.Name = name
-	res.KeyMap = keyMap
-
-	reverseKeyMap := make(map[rune]KeyWithShift)
-	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
-
-	for keyWithShift, r := range keyMap {
-		if _, alreadyExist := reverseKeyMap[r]; alreadyExist {
-			return Layout{}, fmt.Errorf("duplicate rune in the input layout map")
-		}
-		reverseKeyMap[r] = keyWithShift
-
-		shifted := keyWithShift.Shift
-		if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && !shifted {
-			lowerLetters = append(lowerLetters, r)
-		} else if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && shifted {
-			upperLetters = append(upperLetters, r)
-		} else if unicode.IsDigit(r) {
-			digits = append(digits, r)
-		} else {
-			if !shifted {
-				lowerSymbols = append(lowerSymbols, r)
-			}
-			if shifted {
-				upperSymbols = append(upperSymbols, r)
-			}
-		}
-	}
-
-	res.ReverseKeyMap = reverseKeyMap
-	res.LowerLetters = lowerLetters
-	res.UpperLetters = upperLetters
-	res.Digits = digits
-	res.LowerSymbols = lowerSymbols
-	res.UpperSymbols = upperSymbols
-
-	return res, nil
-}
 
 var InputUSKeyMap = map[KeyWithShift]rune{
 	{Key: ebiten.KeyA, Shift: false}: 'a', {Key: ebiten.KeyA, Shift: true}: 'A',

@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"image/color"
 	"log"
 	"math/rand/v2"
 	"os"
+	"unicode"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -14,8 +14,7 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-const ScreenWidth = 1920
-const ScreenHeight = 50
+var ScreenHeight = 50
 
 const TrimDistanceBeforeCurrent = 100
 const GenerateGibberishDistanceAfterCurrent = 100
@@ -23,17 +22,8 @@ const GenerateGibberishDistanceAfterCurrent = 100
 var BaseCumulativeDistribution []float64
 var ModifierCumulativeDistribution []float64
 
-const FontSize = 16
-const FontDPI = 72
-
 var FontFace font.Face
 var FontDrawer *font.Drawer
-
-var BackgroundColor = color.RGBA{24, 22, 22, 255}
-var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
-var CurrentComboColor = color.RGBA{196, 178, 138, 255}
-var CorrectPastComboColor = color.RGBA{138, 154, 123, 255}
-var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
 
 var GibberishYPos int
 var InputYPos int
@@ -260,7 +250,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", FontSize, FontDPI)
+	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", FontSize, 72)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -385,4 +375,374 @@ func getFaceFromPath(path string, size, dpi float64) (font.Face, error) {
 		return nil, err
 	}
 	return face, nil
+}
+
+type ModCategory struct {
+	Name    string
+	Weight  int
+	Handler func(*KeyCombo) error
+}
+
+var ModCategories = []ModCategory{
+	{
+		Name:   "No modifiers",
+		Weight: 25,
+		Handler: func(kc *KeyCombo) error {
+			return nil
+		},
+	},
+	{
+		Name:   "Control",
+		Weight: 2,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			return nil
+		},
+	},
+	{
+		Name:   "Alt",
+		Weight: 2,
+		Handler: func(kc *KeyCombo) error {
+			kc.Alt = true
+			return nil
+		},
+	},
+	{
+		Name:   "Shift",
+		Weight: 2,
+		Handler: func(kc *KeyCombo) error {
+			if kc.LowerRune == 0 && kc.UpperRune == 0 {
+				kc.Shift = true
+			}
+			return nil
+		},
+	},
+	{
+		Name:   "Meta",
+		Weight: 2,
+		Handler: func(kc *KeyCombo) error {
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Alt",
+		Weight: 1,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Alt = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Shift",
+		Weight: 1,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Shift = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Meta",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Alt+Shift",
+		Weight: 1,
+		Handler: func(kc *KeyCombo) error {
+			kc.Alt = true
+			kc.Shift = true
+			return nil
+		},
+	},
+	{
+		Name:   "Alt+Meta",
+		Weight: 1,
+		Handler: func(kc *KeyCombo) error {
+			kc.Alt = true
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Shift+Meta",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Shift = true
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Alt+Shift",
+		Weight: 1,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Alt = true
+			kc.Shift = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Alt+Meta",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Alt = true
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Shift+Meta",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Shift = true
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Alt+Shift+Meta",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Alt = true
+			kc.Shift = true
+			kc.Meta = true
+			return nil
+		},
+	},
+	{
+		Name:   "Control+Alt+Shift+Meta",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Control = true
+			kc.Alt = true
+			kc.Shift = true
+			kc.Meta = true
+			return nil
+		},
+	},
+}
+
+type BaseCategory struct {
+	Name      string
+	Weight    int
+	Handler   func(*KeyCombo) error
+	Validator func() bool
+}
+
+var BaseCategories = []BaseCategory{
+	{
+		Name:   "Lower Letters",
+		Weight: 20,
+		Handler: func(kc *KeyCombo) error {
+			kc.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
+			return nil
+		},
+		Validator: func() bool {
+			return len(CurrentLayout.LowerLetters) > 0
+		},
+	},
+	{
+		Name:   "Upper Letters",
+		Weight: 10,
+		Handler: func(kc *KeyCombo) error {
+			kc.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
+			return nil
+		},
+		Validator: func() bool {
+			return len(CurrentLayout.UpperLetters) > 0
+		},
+	},
+	{
+		Name:   "Lower Symbols",
+		Weight: 10,
+		Handler: func(kc *KeyCombo) error {
+			kc.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
+			return nil
+		},
+		Validator: func() bool {
+			return len(CurrentLayout.LowerSymbols) > 0
+		},
+	},
+	{
+		Name:   "Upper Symbols",
+		Weight: 10,
+		Handler: func(kc *KeyCombo) error {
+			kc.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
+			return nil
+		},
+		Validator: func() bool {
+			return len(CurrentLayout.UpperSymbols) > 0
+		},
+	},
+	{
+		Name:   "Digits",
+		Weight: 10,
+		Handler: func(kc *KeyCombo) error {
+			kc.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
+			return nil
+		},
+		Validator: func() bool {
+			return len(CurrentLayout.Digits) > 0
+		},
+	},
+	{
+		Name:   "Non-Printable Keys 1",
+		Weight: 10,
+		Handler: func(kc *KeyCombo) error {
+			kc.Key = NonPrintableKeys1[rand.IntN(len(NonPrintableKeys1))]
+			return nil
+		},
+		Validator: func() bool {
+			return len(NonPrintableKeys1) > 0
+		},
+	},
+	{
+		Name:   "Non-Printable Keys 2",
+		Weight: 5,
+		Handler: func(kc *KeyCombo) error {
+			kc.Key = NonPrintableKeys2[rand.IntN(len(NonPrintableKeys2))]
+			return nil
+		},
+		Validator: func() bool {
+			return len(NonPrintableKeys2) > 0
+		},
+	},
+	{
+		Name:   "Custom Chars",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
+			return nil
+		},
+		Validator: func() bool {
+			return len(CustomChars) > 0
+		},
+	},
+	{
+		Name:   "Custom Keys",
+		Weight: 0,
+		Handler: func(kc *KeyCombo) error {
+			kc.Key = CustomKeys[rand.IntN(len(CustomKeys))]
+			return nil
+		},
+		Validator: func() bool {
+			return len(CustomKeys) > 0
+		},
+	},
+}
+
+type KeyWithShift struct {
+	Key   ebiten.Key
+	Shift bool
+}
+
+type Layout struct {
+	Name   string
+	KeyMap map[KeyWithShift]rune
+
+	ReverseKeyMap map[rune]KeyWithShift
+
+	LowerLetters []rune
+	UpperLetters []rune
+	Digits       []rune
+	LowerSymbols []rune
+	UpperSymbols []rune
+}
+
+var Layouts []Layout
+var CurrentLayout Layout
+
+func InitLayout() error {
+	usLayout, err := GetLayoutFromKeyMap("US", InputUSKeyMap)
+	if err != nil {
+		return fmt.Errorf("err getting layout from the US key map: %w", err)
+	}
+	Layouts = append(Layouts, usLayout)
+	ruLayout, err := GetLayoutFromKeyMap("RU", InputRUKeyMap)
+	if err != nil {
+		return fmt.Errorf("err getting layout from the RU key map: %w", err)
+	}
+	Layouts = append(Layouts, ruLayout)
+	uaLayout, err := GetLayoutFromKeyMap("UA", InputUAKeyMap)
+	if err != nil {
+		return fmt.Errorf("err getting layout from the UA key map: %w", err)
+	}
+	Layouts = append(Layouts, uaLayout)
+
+	for _, l := range Layouts {
+		if l.Name == CurrentLayoutName {
+			CurrentLayout = l
+		}
+	}
+	if CurrentLayout.Name == "" {
+		if CurrentLayoutName == "" {
+			return fmt.Errorf("no layout is set")
+		}
+		return fmt.Errorf("no such layout: %s", CurrentLayoutName)
+	}
+
+	for _, r := range CustomChars {
+		_, exist := CurrentLayout.ReverseKeyMap[r]
+		if !exist {
+			return fmt.Errorf("custom layout contains a char '%c' that is absent in the current layout", r)
+		}
+	}
+
+	for _, category := range BaseCategories {
+		if category.Weight > 0 && !category.Validator() {
+			return fmt.Errorf("config error: base category \"%s\" weigh is more than zero while slice it is pulling from is empty", category.Name)
+		}
+	}
+	return nil
+}
+
+func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, error) {
+	res := Layout{}
+	res.Name = name
+	res.KeyMap = keyMap
+
+	reverseKeyMap := make(map[rune]KeyWithShift)
+	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
+
+	for keyWithShift, r := range keyMap {
+		if _, alreadyExist := reverseKeyMap[r]; alreadyExist {
+			return Layout{}, fmt.Errorf("duplicate rune in the input layout map")
+		}
+		reverseKeyMap[r] = keyWithShift
+
+		shifted := keyWithShift.Shift
+		if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && !shifted {
+			lowerLetters = append(lowerLetters, r)
+		} else if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && shifted {
+			upperLetters = append(upperLetters, r)
+		} else if unicode.IsDigit(r) {
+			digits = append(digits, r)
+		} else {
+			if !shifted {
+				lowerSymbols = append(lowerSymbols, r)
+			}
+			if shifted {
+				upperSymbols = append(upperSymbols, r)
+			}
+		}
+	}
+
+	res.ReverseKeyMap = reverseKeyMap
+	res.LowerLetters = lowerLetters
+	res.UpperLetters = upperLetters
+	res.Digits = digits
+	res.LowerSymbols = lowerSymbols
+	res.UpperSymbols = upperSymbols
+
+	return res, nil
 }
