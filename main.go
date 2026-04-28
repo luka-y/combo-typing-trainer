@@ -646,6 +646,11 @@ type KeyWithShift struct {
 	Shift bool
 }
 
+type InputLayout struct {
+	Name   string
+	KeyMap map[KeyWithShift]rune
+}
+
 type Layout struct {
 	Name   string
 	KeyMap map[KeyWithShift]rune
@@ -663,21 +668,13 @@ var Layouts []Layout
 var CurrentLayout Layout
 
 func InitLayout() error {
-	usLayout, err := GetLayoutFromKeyMap("US", InputUSKeyMap)
-	if err != nil {
-		return fmt.Errorf("err getting layout from the US key map: %w", err)
+	for _, il := range InputLayouts {
+		layout, err := GetLayoutFromKeyMap(il.Name, il.KeyMap)
+		if err != nil {
+			return fmt.Errorf("err getting layout from the %s key map: %w", il.Name, err)
+		}
+		Layouts = append(Layouts, layout)
 	}
-	Layouts = append(Layouts, usLayout)
-	ruLayout, err := GetLayoutFromKeyMap("RU", InputRUKeyMap)
-	if err != nil {
-		return fmt.Errorf("err getting layout from the RU key map: %w", err)
-	}
-	Layouts = append(Layouts, ruLayout)
-	uaLayout, err := GetLayoutFromKeyMap("UA", InputUAKeyMap)
-	if err != nil {
-		return fmt.Errorf("err getting layout from the UA key map: %w", err)
-	}
-	Layouts = append(Layouts, uaLayout)
 
 	for _, l := range Layouts {
 		if l.Name == CurrentLayoutName {

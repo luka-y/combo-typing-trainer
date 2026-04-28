@@ -5,14 +5,11 @@ micro to-do:
 
 
 priority 0:
-    finish with to-move-to-config
-        layout: more universal, so you can add any layout with a name and a map. So if you provide a string for a name and
-            a map[KeyWithShift]rune that is valid, you will just add that layout to Layouts slice automatically.
     check if all good with probabilities and if they make sense
     overwrite ScreenWidth if UseDefaultScreenWidth is true
     calculate ScreenHeight based on the font size. Remove that hardcoded 2 for InputYPos and GibberishYPos maybe.
 
-    make config
+    make config, validate everything, fatal if not valid.
 
     extract everything from just main to own files (refactor)
     test if all works on windows
