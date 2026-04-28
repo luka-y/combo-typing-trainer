@@ -223,7 +223,7 @@ func (g *Game) UpdateScreenImg() {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
-	return outsideWidth, outsideHeight
+	return ScreenWidth, ScreenHeight
 }
 
 func (g *Game) FirstUpdateCall() error {
@@ -258,6 +258,10 @@ func main() {
 
 	InputYPos = FontSize + 2
 	GibberishYPos = ScreenHeight - int(FontFace.Metrics().Descent.Ceil()) - 2
+
+	if OverwriteScreenWidthWithDefault {
+		ScreenWidth, _ = ebiten.Monitor().Size()
+	}
 
 	ebiten.SetWindowSize(ScreenWidth, ScreenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")

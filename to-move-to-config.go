@@ -6,9 +6,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const UseDefaultScreenWidth = true
+const OverwriteScreenWidthWithDefault = true
 
-var ScreenWidth = 1920
+var ScreenWidth = 1600
 
 const FontSize = 16
 

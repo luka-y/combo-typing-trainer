@@ -5,7 +5,6 @@ micro to-do:
 
 
 priority 0:
-    overwrite ScreenWidth if UseDefaultScreenWidth is true
     calculate ScreenHeight based on the font size. Remove that hardcoded 2 for InputYPos and GibberishYPos maybe.
 
     make config, validate everything, fatal if not valid.
