@@ -10,7 +10,7 @@ const OverwriteScreenWidthWithDefault = true
 
 var ScreenWidth = 1600
 
-const FontSize = 16
+const FontSize = 18
 
 const (
 	BaseWeightLowerLetters      = 30

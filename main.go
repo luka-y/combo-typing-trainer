@@ -14,7 +14,7 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-var ScreenHeight = 50
+var ScreenHeight int
 
 const TrimDistanceBeforeCurrent = 100
 const GenerateGibberishDistanceAfterCurrent = 100
@@ -255,6 +255,8 @@ func main() {
 		log.Fatal(err)
 	}
 	FontDrawer = &font.Drawer{Face: FontFace}
+
+	ScreenHeight = int(float64(FontFace.Metrics().Ascent.Ceil()+FontFace.Metrics().Descent.Ceil()) * 2.15)
 
 	InputYPos = FontSize + 2
 	GibberishYPos = ScreenHeight - int(FontFace.Metrics().Descent.Ceil()) - 2
