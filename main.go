@@ -386,14 +386,14 @@ type ModCategory struct {
 var ModCategories = []ModCategory{
 	{
 		Name:   "No modifiers",
-		Weight: 25,
+		Weight: ModWeightNoModifiers,
 		Handler: func(kc *KeyCombo) error {
 			return nil
 		},
 	},
 	{
 		Name:   "Control",
-		Weight: 2,
+		Weight: ModWeightControl,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			return nil
@@ -401,7 +401,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Alt",
-		Weight: 2,
+		Weight: ModWeightAlt,
 		Handler: func(kc *KeyCombo) error {
 			kc.Alt = true
 			return nil
@@ -409,7 +409,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Shift",
-		Weight: 2,
+		Weight: ModWeightShift,
 		Handler: func(kc *KeyCombo) error {
 			if kc.LowerRune == 0 && kc.UpperRune == 0 {
 				kc.Shift = true
@@ -419,7 +419,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Meta",
-		Weight: 2,
+		Weight: ModWeightMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Meta = true
 			return nil
@@ -427,7 +427,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Alt",
-		Weight: 1,
+		Weight: ModWeightControlAlt,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Alt = true
@@ -436,7 +436,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Shift",
-		Weight: 1,
+		Weight: ModWeightControlShift,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Shift = true
@@ -445,7 +445,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Meta",
-		Weight: 0,
+		Weight: ModWeightControlMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Meta = true
@@ -454,7 +454,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Alt+Shift",
-		Weight: 1,
+		Weight: ModWeightAltShift,
 		Handler: func(kc *KeyCombo) error {
 			kc.Alt = true
 			kc.Shift = true
@@ -463,7 +463,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Alt+Meta",
-		Weight: 1,
+		Weight: ModWeightAltMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Alt = true
 			kc.Meta = true
@@ -472,7 +472,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Shift+Meta",
-		Weight: 0,
+		Weight: ModWeightShiftMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Shift = true
 			kc.Meta = true
@@ -481,7 +481,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Alt+Shift",
-		Weight: 1,
+		Weight: ModWeightControlAltShift,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Alt = true
@@ -491,7 +491,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Alt+Meta",
-		Weight: 0,
+		Weight: ModWeightControlAltMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Alt = true
@@ -501,7 +501,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Shift+Meta",
-		Weight: 0,
+		Weight: ModWeightControlShiftMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Shift = true
@@ -511,7 +511,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Alt+Shift+Meta",
-		Weight: 0,
+		Weight: ModWeightAltShiftMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Alt = true
 			kc.Shift = true
@@ -521,7 +521,7 @@ var ModCategories = []ModCategory{
 	},
 	{
 		Name:   "Control+Alt+Shift+Meta",
-		Weight: 0,
+		Weight: ModWeightControlAltShiftMeta,
 		Handler: func(kc *KeyCombo) error {
 			kc.Control = true
 			kc.Alt = true
@@ -542,7 +542,7 @@ type BaseCategory struct {
 var BaseCategories = []BaseCategory{
 	{
 		Name:   "Lower Letters",
-		Weight: 20,
+		Weight: BaseWeightLowerLetters,
 		Handler: func(kc *KeyCombo) error {
 			kc.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
 			return nil
@@ -553,7 +553,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Upper Letters",
-		Weight: 10,
+		Weight: BaseWeightUpperLetters,
 		Handler: func(kc *KeyCombo) error {
 			kc.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
 			return nil
@@ -564,7 +564,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Lower Symbols",
-		Weight: 10,
+		Weight: BaseWeightLowerSymbols,
 		Handler: func(kc *KeyCombo) error {
 			kc.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
 			return nil
@@ -575,7 +575,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Upper Symbols",
-		Weight: 10,
+		Weight: BaseWeightUpperSymbols,
 		Handler: func(kc *KeyCombo) error {
 			kc.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
 			return nil
@@ -586,7 +586,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Digits",
-		Weight: 10,
+		Weight: BaseWeightDigits,
 		Handler: func(kc *KeyCombo) error {
 			kc.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
 			return nil
@@ -597,7 +597,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Non-Printable Keys 1",
-		Weight: 10,
+		Weight: BaseWeightNonPrintableKeys1,
 		Handler: func(kc *KeyCombo) error {
 			kc.Key = NonPrintableKeys1[rand.IntN(len(NonPrintableKeys1))]
 			return nil
@@ -608,7 +608,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Non-Printable Keys 2",
-		Weight: 5,
+		Weight: BaseWeightNonPrintableKeys2,
 		Handler: func(kc *KeyCombo) error {
 			kc.Key = NonPrintableKeys2[rand.IntN(len(NonPrintableKeys2))]
 			return nil
@@ -619,7 +619,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Custom Chars",
-		Weight: 0,
+		Weight: BaseWeightCustomChars,
 		Handler: func(kc *KeyCombo) error {
 			kc.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
 			return nil
@@ -630,7 +630,7 @@ var BaseCategories = []BaseCategory{
 	},
 	{
 		Name:   "Custom Keys",
-		Weight: 0,
+		Weight: BaseWeightCustomKeys,
 		Handler: func(kc *KeyCombo) error {
 			kc.Key = CustomKeys[rand.IntN(len(CustomKeys))]
 			return nil

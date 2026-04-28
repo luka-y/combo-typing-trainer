@@ -6,7 +6,6 @@ micro to-do:
 
 priority 0:
     finish with to-move-to-config
-        extract all weights
         layout: more universal, so you can add any layout with a name and a map. So if you provide a string for a name and
             a map[KeyWithShift]rune that is valid, you will just add that layout to Layouts slice automatically.
     check if all good with probabilities and if they make sense

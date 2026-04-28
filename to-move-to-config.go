@@ -12,6 +12,37 @@ var ScreenWidth = 1920
 
 const FontSize = 16
 
+const (
+	BaseWeightLowerLetters      = 30
+	BaseWeightUpperLetters      = 15
+	BaseWeightLowerSymbols      = 10
+	BaseWeightUpperSymbols      = 10
+	BaseWeightDigits            = 10
+	BaseWeightNonPrintableKeys1 = 5
+	BaseWeightNonPrintableKeys2 = 2
+	BaseWeightCustomChars       = 0
+	BaseWeightCustomKeys        = 0
+)
+
+const (
+	ModWeightNoModifiers         = 100
+	ModWeightControl             = 5
+	ModWeightAlt                 = 5
+	ModWeightShift               = 5
+	ModWeightMeta                = 1
+	ModWeightControlAlt          = 1
+	ModWeightControlShift        = 1
+	ModWeightControlMeta         = 0
+	ModWeightAltShift            = 1
+	ModWeightAltMeta             = 1
+	ModWeightShiftMeta           = 0
+	ModWeightControlAltShift     = 1
+	ModWeightControlAltMeta      = 0
+	ModWeightControlShiftMeta    = 0
+	ModWeightAltShiftMeta        = 0
+	ModWeightControlAltShiftMeta = 0
+)
+
 var BackgroundColor = color.RGBA{24, 22, 22, 255}
 var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
 var CurrentComboColor = color.RGBA{196, 178, 138, 255}
