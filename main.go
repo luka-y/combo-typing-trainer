@@ -395,6 +395,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control",
 		Weight: ModWeightControl,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			return nil
 		},
@@ -403,6 +406,9 @@ var ModCategories = []ModCategory{
 		Name:   "Alt",
 		Weight: ModWeightAlt,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Alt = true
 			return nil
 		},
@@ -411,6 +417,9 @@ var ModCategories = []ModCategory{
 		Name:   "Shift",
 		Weight: ModWeightShift,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			if kc.LowerRune == 0 && kc.UpperRune == 0 {
 				kc.Shift = true
 			}
@@ -421,6 +430,9 @@ var ModCategories = []ModCategory{
 		Name:   "Meta",
 		Weight: ModWeightMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Meta = true
 			return nil
 		},
@@ -429,6 +441,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Alt",
 		Weight: ModWeightControlAlt,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Alt = true
 			return nil
@@ -438,6 +453,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Shift",
 		Weight: ModWeightControlShift,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Shift = true
 			return nil
@@ -447,6 +465,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Meta",
 		Weight: ModWeightControlMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Meta = true
 			return nil
@@ -456,6 +477,9 @@ var ModCategories = []ModCategory{
 		Name:   "Alt+Shift",
 		Weight: ModWeightAltShift,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Alt = true
 			kc.Shift = true
 			return nil
@@ -465,6 +489,9 @@ var ModCategories = []ModCategory{
 		Name:   "Alt+Meta",
 		Weight: ModWeightAltMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Alt = true
 			kc.Meta = true
 			return nil
@@ -474,6 +501,9 @@ var ModCategories = []ModCategory{
 		Name:   "Shift+Meta",
 		Weight: ModWeightShiftMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Shift = true
 			kc.Meta = true
 			return nil
@@ -483,6 +513,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Alt+Shift",
 		Weight: ModWeightControlAltShift,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Alt = true
 			kc.Shift = true
@@ -493,6 +526,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Alt+Meta",
 		Weight: ModWeightControlAltMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Alt = true
 			kc.Meta = true
@@ -503,6 +539,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Shift+Meta",
 		Weight: ModWeightControlShiftMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Shift = true
 			kc.Meta = true
@@ -513,6 +552,9 @@ var ModCategories = []ModCategory{
 		Name:   "Alt+Shift+Meta",
 		Weight: ModWeightAltShiftMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Alt = true
 			kc.Shift = true
 			kc.Meta = true
@@ -523,6 +565,9 @@ var ModCategories = []ModCategory{
 		Name:   "Control+Alt+Shift+Meta",
 		Weight: ModWeightControlAltShiftMeta,
 		Handler: func(kc *KeyCombo) error {
+			if kc.Shift == true {
+				return nil
+			}
 			kc.Control = true
 			kc.Alt = true
 			kc.Shift = true
