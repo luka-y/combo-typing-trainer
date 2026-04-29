@@ -6,6 +6,7 @@ micro to-do:
 
 priority 0:
     make config, validate everything, fatal if not valid.
+    make all config errors so they shown to the user with a prompt "press any key to exit"
 
     extract everything from just main to own files (refactor)
     test if all works on windows

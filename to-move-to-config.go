@@ -6,11 +6,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const OverwriteScreenWidthWithDefault = true
-
-var ScreenWidth = 1600
-
 const FontSize = 18
+
+var BackgroundColor = color.RGBA{24, 22, 22, 255}
+var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
+var CurrentComboColor = color.RGBA{196, 178, 138, 255}
+var CorrectPastComboColor = color.RGBA{138, 154, 123, 255}
+var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
 
 const (
 	BaseWeightLowerLetters      = 30
@@ -43,16 +45,6 @@ const (
 	ModWeightControlAltShiftMeta = 0
 )
 
-var BackgroundColor = color.RGBA{24, 22, 22, 255}
-var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
-var CurrentComboColor = color.RGBA{196, 178, 138, 255}
-var CorrectPastComboColor = color.RGBA{138, 154, 123, 255}
-var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
-
-var CustomChars = []rune{}
-
-var CustomKeys = []ebiten.Key{}
-
 var NonPrintableKeys1 = []ebiten.Key{
 	ebiten.KeyEscape, ebiten.KeyTab, ebiten.KeyCapsLock,
 	ebiten.KeyDelete, ebiten.KeyEnter, ebiten.KeySpace,
@@ -68,6 +60,10 @@ var NonPrintableKeys2 = []ebiten.Key{
 	ebiten.KeyF13, ebiten.KeyF14, ebiten.KeyF15, ebiten.KeyF16,
 	ebiten.KeyPrintScreen, ebiten.KeyScrollLock, ebiten.KeyPause,
 }
+
+var CustomChars = []rune{}
+
+var CustomKeys = []ebiten.Key{}
 
 const CurrentLayoutName = "US"
 

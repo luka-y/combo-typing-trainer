@@ -14,6 +14,7 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
+var ScreenWidth int
 var ScreenHeight int
 
 const TrimDistanceBeforeCurrent = 100
@@ -256,14 +257,11 @@ func main() {
 	}
 	FontDrawer = &font.Drawer{Face: FontFace}
 
+	ScreenWidth, _ = ebiten.Monitor().Size()
 	ScreenHeight = int(float64(FontFace.Metrics().Ascent.Ceil()+FontFace.Metrics().Descent.Ceil()) * 2.15)
 
 	InputYPos = FontSize + 2
 	GibberishYPos = ScreenHeight - int(FontFace.Metrics().Descent.Ceil()) - 2
-
-	if OverwriteScreenWidthWithDefault {
-		ScreenWidth, _ = ebiten.Monitor().Size()
-	}
 
 	ebiten.SetWindowSize(ScreenWidth, ScreenHeight)
 	ebiten.SetWindowTitle("combo-typing-trainer")
