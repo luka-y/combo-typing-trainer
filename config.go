@@ -156,6 +156,28 @@ func ParseConfig() error {
 		return err
 	}
 
+	for _, rawLayout := range cfg.Layouts {
+		final := InputLayout{Name: rawLayout.Name}
+		final.KeyMap = make(map[KeyWithShift]rune)
+		for rawKeyName, doubleRune := range rawLayout.KeyMap {
+			key, exist := stringToEbitenKeyMap[rawKeyName]
+			if !exist {
+				return fmt.Errorf("layout \"%s\" has a key that does not exist: %s", rawLayout.Name, rawKeyName)
+			}
+			lowerRune, isValid := convertStringToRune(doubleRune[0])
+			if !isValid {
+				return fmt.Errorf("layout \"%s\" has a key \"%s\" first value of which is not a valid rune: %s", rawLayout.Name, key.String(), doubleRune[0])
+			}
+			upperRune, isValid := convertStringToRune(doubleRune[1])
+			if !isValid {
+				return fmt.Errorf("layout \"%s\" has a key \"%s\" second value of which is not a valid rune: %s", rawLayout.Name, key.String(), doubleRune[1])
+			}
+			final.KeyMap[KeyWithShift{key, false}] = lowerRune
+			final.KeyMap[KeyWithShift{key, true}] = upperRune
+		}
+		InputLayouts = append(InputLayouts, final)
+	}
+
 	return nil
 }
 
