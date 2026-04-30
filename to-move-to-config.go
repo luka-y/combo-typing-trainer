@@ -63,7 +63,7 @@ var CustomChars = []rune{}
 
 var CustomKeys = []ebiten.Key{}
 
-const CurrentLayoutName = "US"
+var CurrentLayoutName string
 
 var InputLayouts = []InputLayout{
 	{

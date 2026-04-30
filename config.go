@@ -72,27 +72,7 @@ func ParseConfig() error {
 	}
 
 	FontSize = cfg.FontSize
-
-	BackgroundColor, err = getRGBAFromHex(cfg.Colors.Background)
-	if err != nil {
-		return err
-	}
-	UpcomingComboColor, err = getRGBAFromHex(cfg.Colors.UpcomingCombo)
-	if err != nil {
-		return err
-	}
-	CurrentComboColor, err = getRGBAFromHex(cfg.Colors.CurrentCombo)
-	if err != nil {
-		return err
-	}
-	CorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.CorrectPastCombo)
-	if err != nil {
-		return err
-	}
-	IncorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.IncorrectPastCombo)
-	if err != nil {
-		return err
-	}
+	CurrentLayoutName = cfg.CurrentLayoutName
 
 	BaseWeightLowerLetters = cfg.BaseWeights.LowerLetters
 	BaseWeightUpperLetters = cfg.BaseWeights.UpperLetters
@@ -123,6 +103,27 @@ func ParseConfig() error {
 
 	setModCategories()
 	setBaseCategories()
+
+	BackgroundColor, err = getRGBAFromHex(cfg.Colors.Background)
+	if err != nil {
+		return err
+	}
+	UpcomingComboColor, err = getRGBAFromHex(cfg.Colors.UpcomingCombo)
+	if err != nil {
+		return err
+	}
+	CurrentComboColor, err = getRGBAFromHex(cfg.Colors.CurrentCombo)
+	if err != nil {
+		return err
+	}
+	CorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.CorrectPastCombo)
+	if err != nil {
+		return err
+	}
+	IncorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.IncorrectPastCombo)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
