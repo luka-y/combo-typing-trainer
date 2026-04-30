@@ -7,13 +7,8 @@ import (
 )
 
 var (
-	FontSize int
-
-	UpcomingComboColor      color.RGBA
-	CurrentComboColor       color.RGBA
-	CorrectPastComboColor   color.RGBA
-	IncorrectPastComboColor color.RGBA
-	BackgroundColor         color.RGBA
+	FontSize          int
+	CurrentLayoutName string
 
 	BaseWeightLowerLetters      int
 	BaseWeightUpperLetters      int
@@ -41,29 +36,18 @@ var (
 	ModWeightControlShiftMeta    int
 	ModWeightAltShiftMeta        int
 	ModWeightControlAltShiftMeta int
+
+	NonPrintableKeys1 []ebiten.Key
+	NonPrintableKeys2 []ebiten.Key
+	CustomChars       []rune
+	CustomKeys        []ebiten.Key
+
+	UpcomingComboColor      color.RGBA
+	CurrentComboColor       color.RGBA
+	CorrectPastComboColor   color.RGBA
+	IncorrectPastComboColor color.RGBA
+	BackgroundColor         color.RGBA
 )
-
-var NonPrintableKeys1 = []ebiten.Key{
-	ebiten.KeyEscape, ebiten.KeyTab, ebiten.KeyCapsLock,
-	ebiten.KeyDelete, ebiten.KeyEnter, ebiten.KeySpace,
-	ebiten.KeyInsert, ebiten.KeyHome, ebiten.KeyEnd,
-	ebiten.KeyPageUp, ebiten.KeyPageDown,
-	ebiten.KeyArrowUp, ebiten.KeyArrowDown, ebiten.KeyArrowLeft, ebiten.KeyArrowRight,
-}
-
-var NonPrintableKeys2 = []ebiten.Key{
-	ebiten.KeyF1, ebiten.KeyF2, ebiten.KeyF3, ebiten.KeyF4,
-	ebiten.KeyF5, ebiten.KeyF6, ebiten.KeyF7, ebiten.KeyF8,
-	ebiten.KeyF9, ebiten.KeyF10, ebiten.KeyF11, ebiten.KeyF12,
-	ebiten.KeyF13, ebiten.KeyF14, ebiten.KeyF15, ebiten.KeyF16,
-	ebiten.KeyPrintScreen, ebiten.KeyScrollLock, ebiten.KeyPause,
-}
-
-var CustomChars = []rune{}
-
-var CustomKeys = []ebiten.Key{}
-
-var CurrentLayoutName string
 
 var InputLayouts = []InputLayout{
 	{

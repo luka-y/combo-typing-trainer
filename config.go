@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image/color"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/BurntSushi/toml"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -105,6 +106,35 @@ func ParseConfig() error {
 	setModCategories()
 	setBaseCategories()
 
+	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys1 {
+		key, exist := stringToEbitenKeyMap[rawKey]
+		if !exist {
+			return fmt.Errorf("non_printable_keys_1 includes a key that does not exist: %s", rawKey)
+		}
+		NonPrintableKeys1 = append(NonPrintableKeys1, key)
+	}
+	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys2 {
+		key, exist := stringToEbitenKeyMap[rawKey]
+		if !exist {
+			return fmt.Errorf("non_printable_keys_2 includes a key that does not exist: %s", rawKey)
+		}
+		NonPrintableKeys2 = append(NonPrintableKeys2, key)
+	}
+	for _, rawKey := range cfg.NonInferredBaseCategories.CustomKeys {
+		key, exist := stringToEbitenKeyMap[rawKey]
+		if !exist {
+			return fmt.Errorf("custom_keys includes a key that does not exist: %s", rawKey)
+		}
+		CustomKeys = append(CustomKeys, key)
+	}
+	for _, charStr := range cfg.NonInferredBaseCategories.CustomChars {
+		r, isValid := convertStringToRune(charStr)
+		if !isValid {
+			return fmt.Errorf("custom_chars includes a string that is not a valid rune: %s", charStr)
+		}
+		CustomChars = append(CustomChars, r)
+	}
+
 	BackgroundColor, err = getRGBAFromHex(cfg.Colors.Background)
 	if err != nil {
 		return err
@@ -172,4 +202,15 @@ var stringToEbitenKeyMap = map[string]ebiten.Key{
 	"PrintScreen": ebiten.KeyPrintScreen, "Quote": ebiten.KeyQuote, "ScrollLock": ebiten.KeyScrollLock, "Semicolon": ebiten.KeySemicolon,
 	"Shift": ebiten.KeyShift, "ShiftLeft": ebiten.KeyShiftLeft, "ShiftRight": ebiten.KeyShiftRight, "Slash": ebiten.KeySlash,
 	"Space": ebiten.KeySpace, "Tab": ebiten.KeyTab,
+}
+
+func convertStringToRune(s string) (r rune, isValid bool) {
+	if len([]rune(s)) != 1 {
+		return 0, false
+	}
+	r, _ = utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError {
+		return 0, false
+	}
+	return r, true
 }
