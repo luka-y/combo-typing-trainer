@@ -94,33 +94,35 @@ func ParseConfig() error {
 		return err
 	}
 
-	//set all:
-	//BaseWeightLowerLetters      int
-	//BaseWeightUpperLetters      int
-	//BaseWeightLowerSymbols      int
-	//BaseWeightUpperSymbols      int
-	//BaseWeightDigits            int
-	//BaseWeightNonPrintableKeys1 int
-	//BaseWeightNonPrintableKeys2 int
-	//BaseWeightCustomChars       int
-	//BaseWeightCustomKeys        int
-	//
-	//ModWeightNoModifiers         int
-	//ModWeightControl             int
-	//ModWeightAlt                 int
-	//ModWeightShift               int
-	//ModWeightMeta                int
-	//ModWeightControlAlt          int
-	//ModWeightControlShift        int
-	//ModWeightControlMeta         int
-	//ModWeightAltShift            int
-	//ModWeightAltMeta             int
-	//ModWeightShiftMeta           int
-	//ModWeightControlAltShift     int
-	//ModWeightControlAltMeta      int
-	//ModWeightControlShiftMeta    int
-	//ModWeightAltShiftMeta        int
-	//ModWeightControlAltShiftMeta int
+	BaseWeightLowerLetters = cfg.BaseWeights.LowerLetters
+	BaseWeightUpperLetters = cfg.BaseWeights.UpperLetters
+	BaseWeightLowerSymbols = cfg.BaseWeights.LowerSymbols
+	BaseWeightUpperSymbols = cfg.BaseWeights.UpperSymbols
+	BaseWeightDigits = cfg.BaseWeights.Digits
+	BaseWeightNonPrintableKeys1 = cfg.BaseWeights.NonPrintableKeys1
+	BaseWeightNonPrintableKeys2 = cfg.BaseWeights.NonPrintableKeys2
+	BaseWeightCustomChars = cfg.BaseWeights.CustomChars
+	BaseWeightCustomKeys = cfg.BaseWeights.CustomKeys
+
+	ModWeightNoModifiers = cfg.ModWeights.NoModifiers
+	ModWeightControl = cfg.ModWeights.Control
+	ModWeightAlt = cfg.ModWeights.Alt
+	ModWeightShift = cfg.ModWeights.Shift
+	ModWeightMeta = cfg.ModWeights.Meta
+	ModWeightControlAlt = cfg.ModWeights.ControlAlt
+	ModWeightControlShift = cfg.ModWeights.ControlShift
+	ModWeightControlMeta = cfg.ModWeights.ControlMeta
+	ModWeightAltShift = cfg.ModWeights.AltShift
+	ModWeightAltMeta = cfg.ModWeights.AltMeta
+	ModWeightShiftMeta = cfg.ModWeights.ShiftMeta
+	ModWeightControlAltShift = cfg.ModWeights.ControlAltShift
+	ModWeightControlAltMeta = cfg.ModWeights.ControlAltMeta
+	ModWeightControlShiftMeta = cfg.ModWeights.ControlShiftMeta
+	ModWeightAltShiftMeta = cfg.ModWeights.AltShiftMeta
+	ModWeightControlAltShiftMeta = cfg.ModWeights.ControlAltShiftMeta
+
+	setModCategories()
+	setBaseCategories()
 
 	return nil
 }
