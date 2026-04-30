@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type rawConfig struct {
@@ -139,4 +140,36 @@ func getRGBAFromHex(hexString string) (color.RGBA, error) {
 	}
 
 	return color.RGBA{r, g, b, 255}, nil
+}
+
+var stringToEbitenKeyMap = map[string]ebiten.Key{
+	"A": ebiten.KeyA, "B": ebiten.KeyB, "C": ebiten.KeyC, "D": ebiten.KeyD, "E": ebiten.KeyE, "F": ebiten.KeyF,
+	"G": ebiten.KeyG, "H": ebiten.KeyH, "I": ebiten.KeyI, "J": ebiten.KeyJ, "K": ebiten.KeyK, "L": ebiten.KeyL,
+	"M": ebiten.KeyM, "N": ebiten.KeyN, "O": ebiten.KeyO, "P": ebiten.KeyP, "Q": ebiten.KeyQ, "R": ebiten.KeyR,
+	"S": ebiten.KeyS, "T": ebiten.KeyT, "U": ebiten.KeyU, "V": ebiten.KeyV, "W": ebiten.KeyW, "X": ebiten.KeyX,
+	"Y": ebiten.KeyY, "Z": ebiten.KeyZ, "Alt": ebiten.KeyAlt, "AltLeft": ebiten.KeyAltLeft, "AltRight": ebiten.KeyAltRight,
+	"ArrowDown": ebiten.KeyArrowDown, "ArrowLeft": ebiten.KeyArrowLeft, "ArrowRight": ebiten.KeyArrowRight, "ArrowUp": ebiten.KeyArrowUp,
+	"Backquote": ebiten.KeyBackquote, "Backslash": ebiten.KeyBackslash, "Backspace": ebiten.KeyBackspace,
+	"BracketLeft": ebiten.KeyBracketLeft, "BracketRight": ebiten.KeyBracketRight, "CapsLock": ebiten.KeyCapsLock,
+	"Comma": ebiten.KeyComma, "ContextMenu": ebiten.KeyContextMenu, "Control": ebiten.KeyControl,
+	"ControlLeft": ebiten.KeyControlLeft, "ControlRight": ebiten.KeyControlRight, "Delete": ebiten.KeyDelete,
+	"Digit0": ebiten.KeyDigit0, "Digit1": ebiten.KeyDigit1, "Digit2": ebiten.KeyDigit2, "Digit3": ebiten.KeyDigit3,
+	"Digit4": ebiten.KeyDigit4, "Digit5": ebiten.KeyDigit5, "Digit6": ebiten.KeyDigit6, "Digit7": ebiten.KeyDigit7,
+	"Digit8": ebiten.KeyDigit8, "Digit9": ebiten.KeyDigit9, "End": ebiten.KeyEnd, "Enter": ebiten.KeyEnter,
+	"Equal": ebiten.KeyEqual, "Escape": ebiten.KeyEscape, "F1": ebiten.KeyF1, "F2": ebiten.KeyF2, "F3": ebiten.KeyF3,
+	"F4": ebiten.KeyF4, "F5": ebiten.KeyF5, "F6": ebiten.KeyF6, "F7": ebiten.KeyF7, "F8": ebiten.KeyF8,
+	"F9": ebiten.KeyF9, "F10": ebiten.KeyF10, "F11": ebiten.KeyF11, "F12": ebiten.KeyF12, "F13": ebiten.KeyF13,
+	"F14": ebiten.KeyF14, "F15": ebiten.KeyF15, "F16": ebiten.KeyF16, "F17": ebiten.KeyF17, "F18": ebiten.KeyF18,
+	"F19": ebiten.KeyF19, "F20": ebiten.KeyF20, "F21": ebiten.KeyF21, "F22": ebiten.KeyF22, "F23": ebiten.KeyF23,
+	"F24": ebiten.KeyF24, "Home": ebiten.KeyHome, "Insert": ebiten.KeyInsert, "IntlBackslash": ebiten.KeyIntlBackslash,
+	"Meta": ebiten.KeyMeta, "MetaLeft": ebiten.KeyMetaLeft, "MetaRight": ebiten.KeyMetaRight, "Minus": ebiten.KeyMinus,
+	"NumLock": ebiten.KeyNumLock, "Numpad0": ebiten.KeyNumpad0, "Numpad1": ebiten.KeyNumpad1, "Numpad2": ebiten.KeyNumpad2,
+	"Numpad3": ebiten.KeyNumpad3, "Numpad4": ebiten.KeyNumpad4, "Numpad5": ebiten.KeyNumpad5, "Numpad6": ebiten.KeyNumpad6,
+	"Numpad7": ebiten.KeyNumpad7, "Numpad8": ebiten.KeyNumpad8, "Numpad9": ebiten.KeyNumpad9, "NumpadAdd": ebiten.KeyNumpadAdd,
+	"NumpadDecimal": ebiten.KeyNumpadDecimal, "NumpadDivide": ebiten.KeyNumpadDivide, "NumpadEnter": ebiten.KeyNumpadEnter,
+	"NumpadEqual": ebiten.KeyNumpadEqual, "NumpadMultiply": ebiten.KeyNumpadMultiply, "NumpadSubtract": ebiten.KeyNumpadSubtract,
+	"PageDown": ebiten.KeyPageDown, "PageUp": ebiten.KeyPageUp, "Pause": ebiten.KeyPause, "Period": ebiten.KeyPeriod,
+	"PrintScreen": ebiten.KeyPrintScreen, "Quote": ebiten.KeyQuote, "ScrollLock": ebiten.KeyScrollLock, "Semicolon": ebiten.KeySemicolon,
+	"Shift": ebiten.KeyShift, "ShiftLeft": ebiten.KeyShiftLeft, "ShiftRight": ebiten.KeyShiftRight, "Slash": ebiten.KeySlash,
+	"Space": ebiten.KeySpace, "Tab": ebiten.KeyTab,
 }
