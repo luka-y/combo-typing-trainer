@@ -4,12 +4,22 @@
 micro to-do:
 
 priority 0:
+    make better hex decoding
+    use toml provided metadata for better errors
+        err on unknown keys
+        err if one of them is missing. All should be required
+        require values for each field, never omit zero values
+        maybe other uses of it
     read the actual config, not default, created default if none
     make all config errors so they shown to the user with a prompt "press any key to exit"
-    make better validation of all values, include InitLayout in config validation
+    make better validation
+        include InitLayout in config validation
+        go through each value and think how it can be validated. Maybe ask an llm too.
 
     embed assets
-    extract everything from just main to own files (refactor)
+    refactor
+        extract everything to own files
+        maybe have less globals or have them grouped
     test if all works on windows
 
 priority 2:
