@@ -32,7 +32,7 @@ control_shift_meta      = 0
 alt_shift_meta          = 0
 control_alt_shift_meta  = 0
 
-[non-inferred-base_categories]
+[non_inferred_base_categories]
 non_printable_keys_1 = [
     "Escape", "Tab", "CapsLock",
     "Delete", "Enter", "Space",

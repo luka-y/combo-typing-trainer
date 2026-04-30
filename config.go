@@ -50,7 +50,7 @@ type rawConfig struct {
 		NonPrintableKeys2 []string `toml:"non_printable_keys_2"`
 		CustomChars       []string `toml:"custom_chars"`
 		CustomKeys        []string `toml:"custom_keys"`
-	} `toml:"non-inferred-base_categories"`
+	} `toml:"non_inferred_base_categories"`
 
 	Colors struct {
 		Background         string `toml:"background"`
