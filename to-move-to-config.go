@@ -6,43 +6,41 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-const FontSize = 18
+var (
+	FontSize int
 
-var BackgroundColor = color.RGBA{24, 22, 22, 255}
-var UpcomingComboColor = color.RGBA{110, 110, 105, 255}
-var CurrentComboColor = color.RGBA{196, 178, 138, 255}
-var CorrectPastComboColor = color.RGBA{138, 154, 123, 255}
-var IncorrectPastComboColor = color.RGBA{196, 116, 110, 255}
+	UpcomingComboColor      color.RGBA
+	CurrentComboColor       color.RGBA
+	CorrectPastComboColor   color.RGBA
+	IncorrectPastComboColor color.RGBA
+	BackgroundColor         color.RGBA
 
-const (
-	BaseWeightLowerLetters      = 30
-	BaseWeightUpperLetters      = 15
-	BaseWeightLowerSymbols      = 10
-	BaseWeightUpperSymbols      = 10
-	BaseWeightDigits            = 10
-	BaseWeightNonPrintableKeys1 = 5
-	BaseWeightNonPrintableKeys2 = 2
-	BaseWeightCustomChars       = 0
-	BaseWeightCustomKeys        = 0
-)
+	BaseWeightLowerLetters      int
+	BaseWeightUpperLetters      int
+	BaseWeightLowerSymbols      int
+	BaseWeightUpperSymbols      int
+	BaseWeightDigits            int
+	BaseWeightNonPrintableKeys1 int
+	BaseWeightNonPrintableKeys2 int
+	BaseWeightCustomChars       int
+	BaseWeightCustomKeys        int
 
-const (
-	ModWeightNoModifiers         = 100
-	ModWeightControl             = 5
-	ModWeightAlt                 = 5
-	ModWeightShift               = 5
-	ModWeightMeta                = 1
-	ModWeightControlAlt          = 1
-	ModWeightControlShift        = 1
-	ModWeightControlMeta         = 0
-	ModWeightAltShift            = 1
-	ModWeightAltMeta             = 1
-	ModWeightShiftMeta           = 0
-	ModWeightControlAltShift     = 1
-	ModWeightControlAltMeta      = 0
-	ModWeightControlShiftMeta    = 0
-	ModWeightAltShiftMeta        = 0
-	ModWeightControlAltShiftMeta = 0
+	ModWeightNoModifiers         int
+	ModWeightControl             int
+	ModWeightAlt                 int
+	ModWeightShift               int
+	ModWeightMeta                int
+	ModWeightControlAlt          int
+	ModWeightControlShift        int
+	ModWeightControlMeta         int
+	ModWeightAltShift            int
+	ModWeightAltMeta             int
+	ModWeightShiftMeta           int
+	ModWeightControlAltShift     int
+	ModWeightControlAltMeta      int
+	ModWeightControlShiftMeta    int
+	ModWeightAltShiftMeta        int
+	ModWeightControlAltShiftMeta int
 )
 
 var NonPrintableKeys1 = []ebiten.Key{

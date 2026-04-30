@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"image/color"
+	"strings"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -63,5 +67,73 @@ type rawConfig struct {
 func ParseConfig() error {
 	var cfg rawConfig
 	_, err := toml.DecodeFile("assets/default-config.toml", &cfg)
-	return err
+	if err != nil {
+		return fmt.Errorf("error decoding toml file: %w", err)
+	}
+
+	FontSize = cfg.FontSize
+
+	BackgroundColor, err = getRGBAFromHex(cfg.Colors.Background)
+	if err != nil {
+		return err
+	}
+	UpcomingComboColor, err = getRGBAFromHex(cfg.Colors.UpcomingCombo)
+	if err != nil {
+		return err
+	}
+	CurrentComboColor, err = getRGBAFromHex(cfg.Colors.CurrentCombo)
+	if err != nil {
+		return err
+	}
+	CorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.CorrectPastCombo)
+	if err != nil {
+		return err
+	}
+	IncorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.IncorrectPastCombo)
+	if err != nil {
+		return err
+	}
+
+	//set all:
+	//BaseWeightLowerLetters      int
+	//BaseWeightUpperLetters      int
+	//BaseWeightLowerSymbols      int
+	//BaseWeightUpperSymbols      int
+	//BaseWeightDigits            int
+	//BaseWeightNonPrintableKeys1 int
+	//BaseWeightNonPrintableKeys2 int
+	//BaseWeightCustomChars       int
+	//BaseWeightCustomKeys        int
+	//
+	//ModWeightNoModifiers         int
+	//ModWeightControl             int
+	//ModWeightAlt                 int
+	//ModWeightShift               int
+	//ModWeightMeta                int
+	//ModWeightControlAlt          int
+	//ModWeightControlShift        int
+	//ModWeightControlMeta         int
+	//ModWeightAltShift            int
+	//ModWeightAltMeta             int
+	//ModWeightShiftMeta           int
+	//ModWeightControlAltShift     int
+	//ModWeightControlAltMeta      int
+	//ModWeightControlShiftMeta    int
+	//ModWeightAltShiftMeta        int
+	//ModWeightControlAltShiftMeta int
+
+	return nil
+}
+
+func getRGBAFromHex(hexString string) (color.RGBA, error) {
+	hexString = strings.TrimPrefix(hexString, "#")
+
+	var r, g, b uint8
+	n, err := fmt.Sscanf(hexString, "%02x%02x%02x", &r, &g, &b)
+
+	if err != nil || n != 3 {
+		return color.RGBA{}, fmt.Errorf("invalid hex color string: %s", hexString)
+	}
+
+	return color.RGBA{r, g, b, 255}, nil
 }

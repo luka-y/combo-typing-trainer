@@ -256,7 +256,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", FontSize, 72)
+	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", float64(FontSize), 72)
 	if err != nil {
 		log.Fatal(err)
 	}
