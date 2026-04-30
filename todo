@@ -2,12 +2,13 @@
 
 
 micro to-do:
-
+    parse and validate each value one by one, replacing the global in to-move-to-config.
+    read the actual config, not default, make default if none.
 
 priority 0:
     make config, validate everything, fatal if not valid.
     make all config errors so they shown to the user with a prompt "press any key to exit"
-
+    embed assets
     extract everything from just main to own files (refactor)
     test if all works on windows
 

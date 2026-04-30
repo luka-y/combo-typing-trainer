@@ -3,6 +3,7 @@ module combo-typing-trainer
 go 1.25.0
 
 require (
+	github.com/BurntSushi/toml v1.6.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	golang.org/x/image v0.39.0
 )

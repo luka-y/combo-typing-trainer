@@ -246,7 +246,12 @@ func (g *Game) FirstUpdateCall() error {
 }
 
 func main() {
-	err := InitLayout()
+	err := ParseConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = InitLayout()
 	if err != nil {
 		log.Fatal(err)
 	}
