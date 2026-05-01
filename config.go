@@ -77,8 +77,8 @@ func ParseConfig() error {
 		return fmt.Errorf("redundant key: %q", key.String())
 	}
 
-	if !metadata.IsDefined("font_size") {
-		return fmt.Errorf("missed int entry: font_size")
+	if !metadata.IsDefined("font_size") || cfg.FontSize <= 0 {
+		return fmt.Errorf("missed or non-positive int entry: font_size")
 	}
 	FontSize = cfg.FontSize
 
@@ -87,128 +87,128 @@ func ParseConfig() error {
 	}
 	CurrentLayoutName = cfg.CurrentLayoutName
 
-	if !metadata.IsDefined("base_weights", "lower_letters") {
-		return fmt.Errorf("missed int entry: base_weights.lower_letters")
+	if !metadata.IsDefined("base_weights", "lower_letters") || cfg.BaseWeights.LowerLetters < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.lower_letters")
 	}
 	BaseWeightLowerLetters = cfg.BaseWeights.LowerLetters
 
-	if !metadata.IsDefined("base_weights", "upper_letters") {
-		return fmt.Errorf("missed int entry: base_weights.upper_letters")
+	if !metadata.IsDefined("base_weights", "upper_letters") || cfg.BaseWeights.UpperLetters < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.upper_letters")
 	}
 	BaseWeightUpperLetters = cfg.BaseWeights.UpperLetters
 
-	if !metadata.IsDefined("base_weights", "lower_symbols") {
-		return fmt.Errorf("missed int entry: base_weights.lower_symbols")
+	if !metadata.IsDefined("base_weights", "lower_symbols") || cfg.BaseWeights.LowerSymbols < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.lower_symbols")
 	}
 	BaseWeightLowerSymbols = cfg.BaseWeights.LowerSymbols
 
-	if !metadata.IsDefined("base_weights", "upper_symbols") {
-		return fmt.Errorf("missed int entry: base_weights.upper_symbols")
+	if !metadata.IsDefined("base_weights", "upper_symbols") || cfg.BaseWeights.UpperSymbols < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.upper_symbols")
 	}
 	BaseWeightUpperSymbols = cfg.BaseWeights.UpperSymbols
 
-	if !metadata.IsDefined("base_weights", "digits") {
-		return fmt.Errorf("missed int entry: base_weights.digits")
+	if !metadata.IsDefined("base_weights", "digits") || cfg.BaseWeights.Digits < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.digits")
 	}
 	BaseWeightDigits = cfg.BaseWeights.Digits
 
-	if !metadata.IsDefined("base_weights", "non_printable_keys_1") {
-		return fmt.Errorf("missed int entry: base_weights.non_printable_keys_1")
+	if !metadata.IsDefined("base_weights", "non_printable_keys_1") || cfg.BaseWeights.NonPrintableKeys1 < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.non_printable_keys_1")
 	}
 	BaseWeightNonPrintableKeys1 = cfg.BaseWeights.NonPrintableKeys1
 
-	if !metadata.IsDefined("base_weights", "non_printable_keys_2") {
-		return fmt.Errorf("missed int entry: base_weights.non_printable_keys_2")
+	if !metadata.IsDefined("base_weights", "non_printable_keys_2") || cfg.BaseWeights.NonPrintableKeys2 < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.non_printable_keys_2")
 	}
 	BaseWeightNonPrintableKeys2 = cfg.BaseWeights.NonPrintableKeys2
 
-	if !metadata.IsDefined("base_weights", "custom_chars") {
-		return fmt.Errorf("missed int entry: base_weights.custom_chars")
+	if !metadata.IsDefined("base_weights", "custom_chars") || cfg.BaseWeights.CustomChars < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.custom_chars")
 	}
 	BaseWeightCustomChars = cfg.BaseWeights.CustomChars
 
-	if !metadata.IsDefined("base_weights", "custom_keys") {
-		return fmt.Errorf("missed int entry: base_weights.custom_keys")
+	if !metadata.IsDefined("base_weights", "custom_keys") || cfg.BaseWeights.CustomKeys < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.custom_keys")
 	}
 	BaseWeightCustomKeys = cfg.BaseWeights.CustomKeys
 
-	if !metadata.IsDefined("mod_weights", "no_modifiers") {
-		return fmt.Errorf("missed int entry: mod_weights.no_modifiers")
+	if !metadata.IsDefined("mod_weights", "no_modifiers") || cfg.ModWeights.NoModifiers < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.no_modifiers")
 	}
 	ModWeightNoModifiers = cfg.ModWeights.NoModifiers
 
-	if !metadata.IsDefined("mod_weights", "control") {
-		return fmt.Errorf("missed int entry: mod_weights.control")
+	if !metadata.IsDefined("mod_weights", "control") || cfg.ModWeights.Control < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control")
 	}
 	ModWeightControl = cfg.ModWeights.Control
 
-	if !metadata.IsDefined("mod_weights", "alt") {
-		return fmt.Errorf("missed int entry: mod_weights.alt")
+	if !metadata.IsDefined("mod_weights", "alt") || cfg.ModWeights.Alt < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.alt")
 	}
 	ModWeightAlt = cfg.ModWeights.Alt
 
-	if !metadata.IsDefined("mod_weights", "shift") {
-		return fmt.Errorf("missed int entry: mod_weights.shift")
+	if !metadata.IsDefined("mod_weights", "shift") || cfg.ModWeights.Shift < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.shift")
 	}
 	ModWeightShift = cfg.ModWeights.Shift
 
-	if !metadata.IsDefined("mod_weights", "meta") {
-		return fmt.Errorf("missed int entry: mod_weights.meta")
+	if !metadata.IsDefined("mod_weights", "meta") || cfg.ModWeights.Meta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.meta")
 	}
 	ModWeightMeta = cfg.ModWeights.Meta
 
-	if !metadata.IsDefined("mod_weights", "control_alt") {
-		return fmt.Errorf("missed int entry: mod_weights.control_alt")
+	if !metadata.IsDefined("mod_weights", "control_alt") || cfg.ModWeights.ControlAlt < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_alt")
 	}
 	ModWeightControlAlt = cfg.ModWeights.ControlAlt
 
-	if !metadata.IsDefined("mod_weights", "control_shift") {
-		return fmt.Errorf("missed int entry: mod_weights.control_shift")
+	if !metadata.IsDefined("mod_weights", "control_shift") || cfg.ModWeights.ControlShift < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_shift")
 	}
 	ModWeightControlShift = cfg.ModWeights.ControlShift
 
-	if !metadata.IsDefined("mod_weights", "control_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.control_meta")
+	if !metadata.IsDefined("mod_weights", "control_meta") || cfg.ModWeights.ControlMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_meta")
 	}
 	ModWeightControlMeta = cfg.ModWeights.ControlMeta
 
-	if !metadata.IsDefined("mod_weights", "alt_shift") {
-		return fmt.Errorf("missed int entry: mod_weights.alt_shift")
+	if !metadata.IsDefined("mod_weights", "alt_shift") || cfg.ModWeights.AltShift < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.alt_shift")
 	}
 	ModWeightAltShift = cfg.ModWeights.AltShift
 
-	if !metadata.IsDefined("mod_weights", "alt_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.alt_meta")
+	if !metadata.IsDefined("mod_weights", "alt_meta") || cfg.ModWeights.AltMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.alt_meta")
 	}
 	ModWeightAltMeta = cfg.ModWeights.AltMeta
 
-	if !metadata.IsDefined("mod_weights", "shift_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.shift_meta")
+	if !metadata.IsDefined("mod_weights", "shift_meta") || cfg.ModWeights.ShiftMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.shift_meta")
 	}
 	ModWeightShiftMeta = cfg.ModWeights.ShiftMeta
 
-	if !metadata.IsDefined("mod_weights", "control_alt_shift") {
-		return fmt.Errorf("missed int entry: mod_weights.control_alt_shift")
+	if !metadata.IsDefined("mod_weights", "control_alt_shift") || cfg.ModWeights.ControlAltShift < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_alt_shift")
 	}
 	ModWeightControlAltShift = cfg.ModWeights.ControlAltShift
 
-	if !metadata.IsDefined("mod_weights", "control_alt_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.control_alt_meta")
+	if !metadata.IsDefined("mod_weights", "control_alt_meta") || cfg.ModWeights.ControlAltMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_alt_meta")
 	}
 	ModWeightControlAltMeta = cfg.ModWeights.ControlAltMeta
 
-	if !metadata.IsDefined("mod_weights", "control_shift_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.control_shift_meta")
+	if !metadata.IsDefined("mod_weights", "control_shift_meta") || cfg.ModWeights.ControlShiftMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_shift_meta")
 	}
 	ModWeightControlShiftMeta = cfg.ModWeights.ControlShiftMeta
 
-	if !metadata.IsDefined("mod_weights", "alt_shift_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.alt_shift_meta")
+	if !metadata.IsDefined("mod_weights", "alt_shift_meta") || cfg.ModWeights.AltShiftMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.alt_shift_meta")
 	}
 	ModWeightAltShiftMeta = cfg.ModWeights.AltShiftMeta
 
-	if !metadata.IsDefined("mod_weights", "control_alt_shift_meta") {
-		return fmt.Errorf("missed int entry: mod_weights.control_alt_shift_meta")
+	if !metadata.IsDefined("mod_weights", "control_alt_shift_meta") || cfg.ModWeights.ControlAltShiftMeta < 0 {
+		return fmt.Errorf("missed or negative int entry: mod_weights.control_alt_shift_meta")
 	}
 	ModWeightControlAltShiftMeta = cfg.ModWeights.ControlAltShiftMeta
 
@@ -299,6 +299,7 @@ func ParseConfig() error {
 		return err
 	}
 
+	seenLayoutNames := make(map[string]bool)
 	for i, rawLayout := range cfg.Layouts {
 		if rawLayout.Name == "" {
 			return fmt.Errorf("missed string entry: layouts[%d].name", i)
@@ -306,6 +307,10 @@ func ParseConfig() error {
 		if rawLayout.KeyMap == nil {
 			return fmt.Errorf("missed map entry: layouts[%d].key_map", i)
 		}
+		if seenLayoutNames[rawLayout.Name] {
+			return fmt.Errorf("duplicate layout name: %q", rawLayout.Name)
+		}
+		seenLayoutNames[rawLayout.Name] = true
 		final := InputLayout{Name: rawLayout.Name}
 		final.KeyMap = make(map[KeyWithShift]rune)
 		for rawKeyName, doubleRune := range rawLayout.KeyMap {
