@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"image/color"
 	"log"
 	"math/rand/v2"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text"
 	"golang.org/x/image/font"
+	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/font/opentype"
 )
 
@@ -28,6 +30,8 @@ var FontDrawer *font.Drawer
 
 var GibberishYPos int
 var InputYPos int
+
+var ConfigErr error
 
 type KeyCombo struct {
 	Key       ebiten.Key
@@ -81,9 +85,16 @@ type Game struct {
 func (g *Game) Update() error {
 	if g.TickCounter == 0 {
 		g.TickCounter++
+		if ConfigErr != nil {
+			return g.FirstUpdateCallConfigErr()
+		}
 		return g.FirstUpdateCall()
 	}
 	g.TickCounter++
+
+	if ConfigErr != nil {
+		return ConfigErrUpdate()
+	}
 
 	changeThisFrame := false
 
@@ -170,7 +181,9 @@ func isKeyModifierToSkip(key ebiten.Key) bool {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.DrawImage(g.ScreenImg, &ebiten.DrawImageOptions{})
+	if g.ScreenImg != nil {
+		screen.DrawImage(g.ScreenImg, &ebiten.DrawImageOptions{})
+	}
 }
 
 func (g *Game) UpdateScreenImg() {
@@ -245,20 +258,40 @@ func (g *Game) FirstUpdateCall() error {
 	return nil
 }
 
+func (g *Game) FirstUpdateCallConfigErr() error {
+	g.ScreenImg = ebiten.NewImage(ScreenWidth, ScreenHeight)
+
+	text.Draw(g.ScreenImg, "Config error: "+ConfigErr.Error(), FontFace, 0, InputYPos, color.RGBA{255, 100, 100, 255})
+	text.Draw(g.ScreenImg, "Press any key to exit", FontFace, 0, GibberishYPos, color.RGBA{255, 255, 255, 255})
+	return nil
+}
+
+func ConfigErrUpdate() error {
+	if len(inpututil.AppendJustPressedKeys([]ebiten.Key{})) > 0 {
+		return ConfigErr
+	}
+	return nil
+}
+
 func main() {
 	err := ParseConfig()
-	if err != nil {
-		log.Fatal(err)
+	ConfigErr = err
+
+	if ConfigErr == nil {
+		err = InitLayout()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
-	err = InitLayout()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", float64(FontSize), 72)
-	if err != nil {
-		log.Fatal(err)
+	if FontSize <= 0 {
+		FontFace = basicfont.Face7x13
+		FontSize = 7
+	} else {
+		FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", float64(FontSize), 72)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 	FontDrawer = &font.Drawer{Face: FontFace}
 

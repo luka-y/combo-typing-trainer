@@ -75,6 +75,7 @@ github.com/jezek/xgb/xproto
 # golang.org/x/image v0.39.0
 ## explicit; go 1.25.0
 golang.org/x/image/font
+golang.org/x/image/font/basicfont
 golang.org/x/image/font/opentype
 golang.org/x/image/font/sfnt
 golang.org/x/image/math/fixed

@@ -4,7 +4,6 @@
 micro to-do:
 
 priority 0:
-    make all config errors so they shown to the user with a prompt "press any key to exit"
     make better validation
         include InitLayout in config validation
         go through each value and think how it can be validated. Maybe ask an llm too.
