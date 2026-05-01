@@ -69,50 +69,165 @@ type rawConfig struct {
 
 func ParseConfig() error {
 	var cfg rawConfig
-	_, err := toml.DecodeFile("assets/default-config.toml", &cfg)
+	metadata, err := toml.DecodeFile("assets/default-config.toml", &cfg)
 	if err != nil {
 		return fmt.Errorf("error decoding toml file: %w", err)
 	}
+	for _, key := range metadata.Undecoded() {
+		return fmt.Errorf("redundant key: %q", key.String())
+	}
 
+	if !metadata.IsDefined("font_size") {
+		return fmt.Errorf("missed int entry: font_size")
+	}
 	FontSize = cfg.FontSize
+
+	if !metadata.IsDefined("current_layout_name") {
+		return fmt.Errorf("missed string entry: current_layout_name")
+	}
 	CurrentLayoutName = cfg.CurrentLayoutName
 
+	if !metadata.IsDefined("base_weights", "lower_letters") {
+		return fmt.Errorf("missed int entry: base_weights.lower_letters")
+	}
 	BaseWeightLowerLetters = cfg.BaseWeights.LowerLetters
+
+	if !metadata.IsDefined("base_weights", "upper_letters") {
+		return fmt.Errorf("missed int entry: base_weights.upper_letters")
+	}
 	BaseWeightUpperLetters = cfg.BaseWeights.UpperLetters
+
+	if !metadata.IsDefined("base_weights", "lower_symbols") {
+		return fmt.Errorf("missed int entry: base_weights.lower_symbols")
+	}
 	BaseWeightLowerSymbols = cfg.BaseWeights.LowerSymbols
+
+	if !metadata.IsDefined("base_weights", "upper_symbols") {
+		return fmt.Errorf("missed int entry: base_weights.upper_symbols")
+	}
 	BaseWeightUpperSymbols = cfg.BaseWeights.UpperSymbols
+
+	if !metadata.IsDefined("base_weights", "digits") {
+		return fmt.Errorf("missed int entry: base_weights.digits")
+	}
 	BaseWeightDigits = cfg.BaseWeights.Digits
+
+	if !metadata.IsDefined("base_weights", "non_printable_keys_1") {
+		return fmt.Errorf("missed int entry: base_weights.non_printable_keys_1")
+	}
 	BaseWeightNonPrintableKeys1 = cfg.BaseWeights.NonPrintableKeys1
+
+	if !metadata.IsDefined("base_weights", "non_printable_keys_2") {
+		return fmt.Errorf("missed int entry: base_weights.non_printable_keys_2")
+	}
 	BaseWeightNonPrintableKeys2 = cfg.BaseWeights.NonPrintableKeys2
+
+	if !metadata.IsDefined("base_weights", "custom_chars") {
+		return fmt.Errorf("missed int entry: base_weights.custom_chars")
+	}
 	BaseWeightCustomChars = cfg.BaseWeights.CustomChars
+
+	if !metadata.IsDefined("base_weights", "custom_keys") {
+		return fmt.Errorf("missed int entry: base_weights.custom_keys")
+	}
 	BaseWeightCustomKeys = cfg.BaseWeights.CustomKeys
 
+	if !metadata.IsDefined("mod_weights", "no_modifiers") {
+		return fmt.Errorf("missed int entry: mod_weights.no_modifiers")
+	}
 	ModWeightNoModifiers = cfg.ModWeights.NoModifiers
+
+	if !metadata.IsDefined("mod_weights", "control") {
+		return fmt.Errorf("missed int entry: mod_weights.control")
+	}
 	ModWeightControl = cfg.ModWeights.Control
+
+	if !metadata.IsDefined("mod_weights", "alt") {
+		return fmt.Errorf("missed int entry: mod_weights.alt")
+	}
 	ModWeightAlt = cfg.ModWeights.Alt
+
+	if !metadata.IsDefined("mod_weights", "shift") {
+		return fmt.Errorf("missed int entry: mod_weights.shift")
+	}
 	ModWeightShift = cfg.ModWeights.Shift
+
+	if !metadata.IsDefined("mod_weights", "meta") {
+		return fmt.Errorf("missed int entry: mod_weights.meta")
+	}
 	ModWeightMeta = cfg.ModWeights.Meta
+
+	if !metadata.IsDefined("mod_weights", "control_alt") {
+		return fmt.Errorf("missed int entry: mod_weights.control_alt")
+	}
 	ModWeightControlAlt = cfg.ModWeights.ControlAlt
+
+	if !metadata.IsDefined("mod_weights", "control_shift") {
+		return fmt.Errorf("missed int entry: mod_weights.control_shift")
+	}
 	ModWeightControlShift = cfg.ModWeights.ControlShift
+
+	if !metadata.IsDefined("mod_weights", "control_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.control_meta")
+	}
 	ModWeightControlMeta = cfg.ModWeights.ControlMeta
+
+	if !metadata.IsDefined("mod_weights", "alt_shift") {
+		return fmt.Errorf("missed int entry: mod_weights.alt_shift")
+	}
 	ModWeightAltShift = cfg.ModWeights.AltShift
+
+	if !metadata.IsDefined("mod_weights", "alt_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.alt_meta")
+	}
 	ModWeightAltMeta = cfg.ModWeights.AltMeta
+
+	if !metadata.IsDefined("mod_weights", "shift_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.shift_meta")
+	}
 	ModWeightShiftMeta = cfg.ModWeights.ShiftMeta
+
+	if !metadata.IsDefined("mod_weights", "control_alt_shift") {
+		return fmt.Errorf("missed int entry: mod_weights.control_alt_shift")
+	}
 	ModWeightControlAltShift = cfg.ModWeights.ControlAltShift
+
+	if !metadata.IsDefined("mod_weights", "control_alt_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.control_alt_meta")
+	}
 	ModWeightControlAltMeta = cfg.ModWeights.ControlAltMeta
+
+	if !metadata.IsDefined("mod_weights", "control_shift_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.control_shift_meta")
+	}
 	ModWeightControlShiftMeta = cfg.ModWeights.ControlShiftMeta
+
+	if !metadata.IsDefined("mod_weights", "alt_shift_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.alt_shift_meta")
+	}
 	ModWeightAltShiftMeta = cfg.ModWeights.AltShiftMeta
+
+	if !metadata.IsDefined("mod_weights", "control_alt_shift_meta") {
+		return fmt.Errorf("missed int entry: mod_weights.control_alt_shift_meta")
+	}
 	ModWeightControlAltShiftMeta = cfg.ModWeights.ControlAltShiftMeta
 
 	setModCategories()
 	setBaseCategories()
 
+	if !metadata.IsDefined("non_inferred_base_categories", "non_printable_keys_1") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.non_printable_keys_1")
+	}
 	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys1 {
 		key, exist := stringToEbitenKeyMap[rawKey]
 		if !exist {
 			return fmt.Errorf("non_printable_keys_1 includes a key that does not exist: %s", rawKey)
 		}
 		NonPrintableKeys1 = append(NonPrintableKeys1, key)
+	}
+
+	if !metadata.IsDefined("non_inferred_base_categories", "non_printable_keys_2") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.non_printable_keys_2")
 	}
 	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys2 {
 		key, exist := stringToEbitenKeyMap[rawKey]
@@ -121,12 +236,20 @@ func ParseConfig() error {
 		}
 		NonPrintableKeys2 = append(NonPrintableKeys2, key)
 	}
+
+	if !metadata.IsDefined("non_inferred_base_categories", "custom_keys") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.custom_keys")
+	}
 	for _, rawKey := range cfg.NonInferredBaseCategories.CustomKeys {
 		key, exist := stringToEbitenKeyMap[rawKey]
 		if !exist {
 			return fmt.Errorf("custom_keys includes a key that does not exist: %s", rawKey)
 		}
 		CustomKeys = append(CustomKeys, key)
+	}
+
+	if !metadata.IsDefined("non_inferred_base_categories", "custom_chars") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.custom_chars")
 	}
 	for _, charStr := range cfg.NonInferredBaseCategories.CustomChars {
 		r, isValid := convertStringToRune(charStr)
@@ -136,28 +259,53 @@ func ParseConfig() error {
 		CustomChars = append(CustomChars, r)
 	}
 
+	if !metadata.IsDefined("colors", "background") {
+		return fmt.Errorf("missed string entry: colors.background")
+	}
 	BackgroundColor, err = getRGBAFromHex(cfg.Colors.Background)
 	if err != nil {
 		return err
+	}
+
+	if !metadata.IsDefined("colors", "upcoming_combo") {
+		return fmt.Errorf("missed string entry: colors.upcoming_combo")
 	}
 	UpcomingComboColor, err = getRGBAFromHex(cfg.Colors.UpcomingCombo)
 	if err != nil {
 		return err
 	}
+
+	if !metadata.IsDefined("colors", "current_combo") {
+		return fmt.Errorf("missed string entry: colors.current_combo")
+	}
 	CurrentComboColor, err = getRGBAFromHex(cfg.Colors.CurrentCombo)
 	if err != nil {
 		return err
 	}
+
+	if !metadata.IsDefined("colors", "correct_past_combo") {
+		return fmt.Errorf("missed string entry: colors.correct_past_combo")
+	}
 	CorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.CorrectPastCombo)
 	if err != nil {
 		return err
+	}
+
+	if !metadata.IsDefined("colors", "incorrect_past_combo") {
+		return fmt.Errorf("missed string entry: colors.incorrect_past_combo")
 	}
 	IncorrectPastComboColor, err = getRGBAFromHex(cfg.Colors.IncorrectPastCombo)
 	if err != nil {
 		return err
 	}
 
-	for _, rawLayout := range cfg.Layouts {
+	for i, rawLayout := range cfg.Layouts {
+		if rawLayout.Name == "" {
+			return fmt.Errorf("missed string entry: layouts[%d].name", i)
+		}
+		if rawLayout.KeyMap == nil {
+			return fmt.Errorf("missed map entry: layouts[%d].key_map", i)
+		}
 		final := InputLayout{Name: rawLayout.Name}
 		final.KeyMap = make(map[KeyWithShift]rune)
 		for rawKeyName, doubleRune := range rawLayout.KeyMap {

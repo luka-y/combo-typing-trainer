@@ -4,11 +4,6 @@
 micro to-do:
 
 priority 0:
-    use toml provided metadata for better errors
-        err on unknown keys
-        err if one of them is missing. All should be required
-        require values for each field, never omit zero values
-        maybe other uses of it
     read the actual config, not default, created default if none
     make all config errors so they shown to the user with a prompt "press any key to exit"
     make better validation
