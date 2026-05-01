@@ -7,6 +7,7 @@ import (
 	"image/color"
 	"os"
 	"strings"
+	"unicode"
 	"unicode/utf8"
 
 	"github.com/BurntSushi/toml"
@@ -348,6 +349,38 @@ func ParseConfig() error {
 		InputLayouts = append(InputLayouts, final)
 	}
 
+	for _, il := range InputLayouts {
+		layout, err := getLayoutFromKeyMap(il.Name, il.KeyMap)
+		if err != nil {
+			return fmt.Errorf("err getting layout from the %s key map: %w", il.Name, err)
+		}
+		Layouts = append(Layouts, layout)
+	}
+
+	for _, l := range Layouts {
+		if l.Name == CurrentLayoutName {
+			CurrentLayout = l
+		}
+	}
+	if CurrentLayout.Name == "" {
+		if CurrentLayoutName == "" {
+			return fmt.Errorf("no layout is set")
+		}
+		return fmt.Errorf("no such layout: %s", CurrentLayoutName)
+	}
+
+	for _, r := range CustomChars {
+		_, exist := CurrentLayout.ReverseKeyMap[r]
+		if !exist {
+			return fmt.Errorf("custom_chars contains a char '%c' that is absent in the current layout", r)
+		}
+	}
+
+	for _, category := range BaseCategories {
+		if category.Weight > 0 && !category.Validator() {
+			return fmt.Errorf("base category \"%s\" weight is more than zero while slice it is pulling from is empty", category.Name)
+		}
+	}
 	return nil
 }
 
@@ -409,4 +442,45 @@ func convertStringToRune(s string) (r rune, isValid bool) {
 		return 0, false
 	}
 	return r, true
+}
+
+func getLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, error) {
+	res := Layout{}
+	res.Name = name
+	res.KeyMap = keyMap
+
+	reverseKeyMap := make(map[rune]KeyWithShift)
+	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
+
+	for keyWithShift, r := range keyMap {
+		if _, alreadyExist := reverseKeyMap[r]; alreadyExist {
+			return Layout{}, fmt.Errorf("duplicate rune in the input layout map")
+		}
+		reverseKeyMap[r] = keyWithShift
+
+		shifted := keyWithShift.Shift
+		if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && !shifted {
+			lowerLetters = append(lowerLetters, r)
+		} else if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && shifted {
+			upperLetters = append(upperLetters, r)
+		} else if unicode.IsDigit(r) {
+			digits = append(digits, r)
+		} else {
+			if !shifted {
+				lowerSymbols = append(lowerSymbols, r)
+			}
+			if shifted {
+				upperSymbols = append(upperSymbols, r)
+			}
+		}
+	}
+
+	res.ReverseKeyMap = reverseKeyMap
+	res.LowerLetters = lowerLetters
+	res.UpperLetters = upperLetters
+	res.Digits = digits
+	res.LowerSymbols = lowerSymbols
+	res.UpperSymbols = upperSymbols
+
+	return res, nil
 }

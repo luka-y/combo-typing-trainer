@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand/v2"
 	"os"
-	"unicode"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -32,6 +31,48 @@ var GibberishYPos int
 var InputYPos int
 
 var ConfigErr error
+
+var Layouts []Layout
+var CurrentLayout Layout
+
+var BaseCategories []BaseCategory
+var ModCategories []ModCategory
+
+type BaseCategory struct {
+	Name      string
+	Weight    int
+	Handler   func(*KeyCombo) error
+	Validator func() bool
+}
+
+type ModCategory struct {
+	Name    string
+	Weight  int
+	Handler func(*KeyCombo) error
+}
+
+type KeyWithShift struct {
+	Key   ebiten.Key
+	Shift bool
+}
+
+type InputLayout struct {
+	Name   string
+	KeyMap map[KeyWithShift]rune
+}
+
+type Layout struct {
+	Name   string
+	KeyMap map[KeyWithShift]rune
+
+	ReverseKeyMap map[rune]KeyWithShift
+
+	LowerLetters []rune
+	UpperLetters []rune
+	Digits       []rune
+	LowerSymbols []rune
+	UpperSymbols []rune
+}
 
 type KeyCombo struct {
 	Key       ebiten.Key
@@ -277,13 +318,6 @@ func main() {
 	err := ParseConfig()
 	ConfigErr = err
 
-	if ConfigErr == nil {
-		err = InitLayout()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
 	if FontSize <= 0 {
 		FontFace = basicfont.Face7x13
 		FontSize = 7
@@ -418,14 +452,6 @@ func getFaceFromPath(path string, size, dpi float64) (font.Face, error) {
 	}
 	return face, nil
 }
-
-type ModCategory struct {
-	Name    string
-	Weight  int
-	Handler func(*KeyCombo) error
-}
-
-var ModCategories []ModCategory
 
 func setModCategories() {
 	ModCategories = []ModCategory{
@@ -623,15 +649,6 @@ func setModCategories() {
 	}
 }
 
-type BaseCategory struct {
-	Name      string
-	Weight    int
-	Handler   func(*KeyCombo) error
-	Validator func() bool
-}
-
-var BaseCategories []BaseCategory
-
 func setBaseCategories() {
 	BaseCategories = []BaseCategory{
 		{
@@ -734,107 +751,4 @@ func setBaseCategories() {
 			},
 		},
 	}
-}
-
-type KeyWithShift struct {
-	Key   ebiten.Key
-	Shift bool
-}
-
-type InputLayout struct {
-	Name   string
-	KeyMap map[KeyWithShift]rune
-}
-
-type Layout struct {
-	Name   string
-	KeyMap map[KeyWithShift]rune
-
-	ReverseKeyMap map[rune]KeyWithShift
-
-	LowerLetters []rune
-	UpperLetters []rune
-	Digits       []rune
-	LowerSymbols []rune
-	UpperSymbols []rune
-}
-
-var Layouts []Layout
-var CurrentLayout Layout
-
-func InitLayout() error {
-	for _, il := range InputLayouts {
-		layout, err := GetLayoutFromKeyMap(il.Name, il.KeyMap)
-		if err != nil {
-			return fmt.Errorf("err getting layout from the %s key map: %w", il.Name, err)
-		}
-		Layouts = append(Layouts, layout)
-	}
-
-	for _, l := range Layouts {
-		if l.Name == CurrentLayoutName {
-			CurrentLayout = l
-		}
-	}
-	if CurrentLayout.Name == "" {
-		if CurrentLayoutName == "" {
-			return fmt.Errorf("no layout is set")
-		}
-		return fmt.Errorf("no such layout: %s", CurrentLayoutName)
-	}
-
-	for _, r := range CustomChars {
-		_, exist := CurrentLayout.ReverseKeyMap[r]
-		if !exist {
-			return fmt.Errorf("custom layout contains a char '%c' that is absent in the current layout", r)
-		}
-	}
-
-	for _, category := range BaseCategories {
-		if category.Weight > 0 && !category.Validator() {
-			return fmt.Errorf("config error: base category \"%s\" weigh is more than zero while slice it is pulling from is empty", category.Name)
-		}
-	}
-	return nil
-}
-
-func GetLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, error) {
-	res := Layout{}
-	res.Name = name
-	res.KeyMap = keyMap
-
-	reverseKeyMap := make(map[rune]KeyWithShift)
-	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
-
-	for keyWithShift, r := range keyMap {
-		if _, alreadyExist := reverseKeyMap[r]; alreadyExist {
-			return Layout{}, fmt.Errorf("duplicate rune in the input layout map")
-		}
-		reverseKeyMap[r] = keyWithShift
-
-		shifted := keyWithShift.Shift
-		if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && !shifted {
-			lowerLetters = append(lowerLetters, r)
-		} else if unicode.Is(unicode.L, r) && !unicode.Is(unicode.Lm, r) && shifted {
-			upperLetters = append(upperLetters, r)
-		} else if unicode.IsDigit(r) {
-			digits = append(digits, r)
-		} else {
-			if !shifted {
-				lowerSymbols = append(lowerSymbols, r)
-			}
-			if shifted {
-				upperSymbols = append(upperSymbols, r)
-			}
-		}
-	}
-
-	res.ReverseKeyMap = reverseKeyMap
-	res.LowerLetters = lowerLetters
-	res.UpperLetters = upperLetters
-	res.Digits = digits
-	res.LowerSymbols = lowerSymbols
-	res.UpperSymbols = upperSymbols
-
-	return res, nil
 }
