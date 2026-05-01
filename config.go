@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"image/color"
 	"strings"
@@ -182,16 +183,20 @@ func ParseConfig() error {
 }
 
 func getRGBAFromHex(hexString string) (color.RGBA, error) {
+	original := hexString
+	hexString = strings.TrimSpace(hexString)
 	hexString = strings.TrimPrefix(hexString, "#")
 
-	var r, g, b uint8
-	n, err := fmt.Sscanf(hexString, "%02x%02x%02x", &r, &g, &b)
-
-	if err != nil || n != 3 {
-		return color.RGBA{}, fmt.Errorf("invalid hex color string: %s", hexString)
+	if len(hexString) != 6 {
+		return color.RGBA{}, fmt.Errorf("invalid hex color string: %q (expected 6 hex digits)", original)
 	}
 
-	return color.RGBA{r, g, b, 255}, nil
+	bytes, err := hex.DecodeString(hexString)
+	if err != nil {
+		return color.RGBA{}, fmt.Errorf("invalid hex color string: %q: %w", original, err)
+	}
+
+	return color.RGBA{bytes[0], bytes[1], bytes[2], 255}, nil
 }
 
 var stringToEbitenKeyMap = map[string]ebiten.Key{

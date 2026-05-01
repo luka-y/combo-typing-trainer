@@ -4,7 +4,6 @@
 micro to-do:
 
 priority 0:
-    make better hex decoding
     use toml provided metadata for better errors
         err on unknown keys
         err if one of them is missing. All should be required
