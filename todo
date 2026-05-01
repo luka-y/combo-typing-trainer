@@ -4,9 +4,6 @@
 micro to-do:
 
 priority 0:
-    embed assets
-    refactor
-        maybe have less globals or have them grouped
     test if all works on windows
 
 priority 2:

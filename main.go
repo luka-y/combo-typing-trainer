@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"log"
 	"math/rand/v2"
-	"os"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -205,7 +204,7 @@ func main() {
 		FontFace = basicfont.Face7x13
 		FontSize = 7
 	} else {
-		FontFace, err = getFaceFromPath("assets/JetBrainsMono-Regular.ttf", float64(FontSize), 72)
+		FontFace, err = getFaceFromEmbeddedAssets(float64(FontSize), 72)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -308,8 +307,8 @@ func convertWeightsToCumulativeDistribution(inputSlice []int) ([]float64, error)
 	return probabilities, nil
 }
 
-func getFaceFromPath(path string, size, dpi float64) (font.Face, error) {
-	fontBytes, err := os.ReadFile(path)
+func getFaceFromEmbeddedAssets(size, dpi float64) (font.Face, error) {
+	fontBytes, err := assets.ReadFile("assets/JetBrainsMono-Regular.ttf")
 	if err != nil {
 		return nil, err
 	}

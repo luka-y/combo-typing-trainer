@@ -73,7 +73,7 @@ type rawConfig struct {
 func ParseConfig() error {
 	_, err := os.Stat("config.toml")
 	if errors.Is(err, os.ErrNotExist) {
-		defaultConfigBytes, err := os.ReadFile("assets/default-config.toml")
+		defaultConfigBytes, err := assets.ReadFile("assets/default-config.toml") //os.ReadFile("assets/")
 		if err != nil {
 			return fmt.Errorf("error reading default config: %w", err)
 		}

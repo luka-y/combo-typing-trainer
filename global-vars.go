@@ -1,11 +1,15 @@
 package main
 
 import (
+	"embed"
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.org/x/image/font"
 )
+
+//go:embed assets/*
+var assets embed.FS
 
 var (
 	ScreenWidth  int
