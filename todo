@@ -4,12 +4,8 @@
 micro to-do:
 
 priority 0:
-    make better validation
-        go through each value and think how it can be validated. Maybe ask an llm too.
-
     embed assets
     refactor
-        extract everything to own files
         maybe have less globals or have them grouped
     test if all works on windows
 

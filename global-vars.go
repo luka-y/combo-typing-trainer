@@ -4,6 +4,32 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"golang.org/x/image/font"
+)
+
+var (
+	ScreenWidth  int
+	ScreenHeight int
+
+	FontFace   font.Face
+	FontDrawer *font.Drawer
+
+	GibberishYPos int
+	InputYPos     int
+
+	ConfigErr error
+
+	BaseCumulativeDistribution     []float64
+	ModifierCumulativeDistribution []float64
+
+	BaseCategories []BaseCategory
+	ModCategories  []ModCategory
+
+	Layouts       []Layout
+	CurrentLayout Layout
+
+	TrimDistanceBeforeCurrent             = 100
+	GenerateGibberishDistanceAfterCurrent = 100
 )
 
 var (

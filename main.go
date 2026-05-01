@@ -15,105 +15,6 @@ import (
 	"golang.org/x/image/font/opentype"
 )
 
-var ScreenWidth int
-var ScreenHeight int
-
-const TrimDistanceBeforeCurrent = 100
-const GenerateGibberishDistanceAfterCurrent = 100
-
-var BaseCumulativeDistribution []float64
-var ModifierCumulativeDistribution []float64
-
-var FontFace font.Face
-var FontDrawer *font.Drawer
-
-var GibberishYPos int
-var InputYPos int
-
-var ConfigErr error
-
-var Layouts []Layout
-var CurrentLayout Layout
-
-var BaseCategories []BaseCategory
-var ModCategories []ModCategory
-
-type BaseCategory struct {
-	Name      string
-	Weight    int
-	Handler   func(*KeyCombo) error
-	Validator func() bool
-}
-
-type ModCategory struct {
-	Name    string
-	Weight  int
-	Handler func(*KeyCombo) error
-}
-
-type KeyWithShift struct {
-	Key   ebiten.Key
-	Shift bool
-}
-
-type InputLayout struct {
-	Name   string
-	KeyMap map[KeyWithShift]rune
-}
-
-type Layout struct {
-	Name   string
-	KeyMap map[KeyWithShift]rune
-
-	ReverseKeyMap map[rune]KeyWithShift
-
-	LowerLetters []rune
-	UpperLetters []rune
-	Digits       []rune
-	LowerSymbols []rune
-	UpperSymbols []rune
-}
-
-type KeyCombo struct {
-	Key       ebiten.Key
-	LowerRune rune
-	UpperRune rune
-
-	Shift   bool
-	Control bool
-	Alt     bool
-	Meta    bool
-
-	StrToDraw string
-}
-
-func (kc *KeyCombo) setStringToDraw() {
-	if kc.Shift && !kc.Control && !kc.Alt && !kc.Meta && kc.UpperRune != 0 {
-		kc.StrToDraw = string(kc.UpperRune)
-		return
-	}
-
-	res := ""
-	if kc.Control {
-		res += "Control+"
-	}
-	if kc.Alt {
-		res += "Alt+"
-	}
-	if kc.Shift {
-		res += "Shift+"
-	}
-	if kc.Meta {
-		res += "Meta+"
-	}
-	if kc.LowerRune != 0 {
-		res += string(kc.LowerRune)
-	} else {
-		res += kc.Key.String()
-	}
-	kc.StrToDraw = res
-}
-
 type Game struct {
 	InputStream     []KeyCombo
 	GibberishStream []KeyCombo
@@ -203,28 +104,11 @@ func (g *Game) Update() error {
 	return nil
 }
 
-func measureStringWidth(s string) int {
-	return int(FontDrawer.MeasureString(s) >> 6)
-}
-
-func isKeyModifierToSkip(key ebiten.Key) bool {
-	switch key {
-	case ebiten.KeyShift, ebiten.KeyShiftLeft, ebiten.KeyShiftRight:
-		return true
-	case ebiten.KeyControl, ebiten.KeyControlLeft, ebiten.KeyControlRight:
-		return true
-	case ebiten.KeyAlt, ebiten.KeyAltLeft, ebiten.KeyAltRight:
-		return true
-	case ebiten.KeyMeta, ebiten.KeyMetaLeft, ebiten.KeyMetaRight:
-		return true
+func ConfigErrUpdate() error {
+	if len(inpututil.AppendJustPressedKeys([]ebiten.Key{})) > 0 {
+		return ConfigErr
 	}
-	return false
-}
-
-func (g *Game) Draw(screen *ebiten.Image) {
-	if g.ScreenImg != nil {
-		screen.DrawImage(g.ScreenImg, &ebiten.DrawImageOptions{})
-	}
+	return nil
 }
 
 func (g *Game) UpdateScreenImg() {
@@ -277,6 +161,12 @@ func (g *Game) UpdateScreenImg() {
 	}
 }
 
+func (g *Game) Draw(screen *ebiten.Image) {
+	if g.ScreenImg != nil {
+		screen.DrawImage(g.ScreenImg, &ebiten.DrawImageOptions{})
+	}
+}
+
 func (g *Game) Layout(outsideWidth, outsideHeight int) (int, int) {
 	return ScreenWidth, ScreenHeight
 }
@@ -304,13 +194,6 @@ func (g *Game) FirstUpdateCallConfigErr() error {
 
 	text.Draw(g.ScreenImg, "Config error: "+ConfigErr.Error(), FontFace, 0, InputYPos, color.RGBA{255, 100, 100, 255})
 	text.Draw(g.ScreenImg, "Press any key to exit", FontFace, 0, GibberishYPos, color.RGBA{255, 255, 255, 255})
-	return nil
-}
-
-func ConfigErrUpdate() error {
-	if len(inpututil.AppendJustPressedKeys([]ebiten.Key{})) > 0 {
-		return ConfigErr
-	}
 	return nil
 }
 
@@ -400,14 +283,6 @@ func getRandomCombo(baseCumulativeDistribution, modifierCumulativeDistribution [
 	return res, nil
 }
 
-func (kc *KeyCombo) setKeyComboBasedOnRune(r rune) {
-	keyWithShift := CurrentLayout.ReverseKeyMap[r]
-	kc.Key = keyWithShift.Key
-	kc.Shift = keyWithShift.Shift
-	kc.LowerRune = CurrentLayout.KeyMap[KeyWithShift{kc.Key, false}]
-	kc.UpperRune = CurrentLayout.KeyMap[KeyWithShift{kc.Key, true}]
-}
-
 func convertWeightsToCumulativeDistribution(inputSlice []int) ([]float64, error) {
 	if len(inputSlice) == 0 {
 		return nil, fmt.Errorf("empty input slice")
@@ -453,302 +328,20 @@ func getFaceFromPath(path string, size, dpi float64) (font.Face, error) {
 	return face, nil
 }
 
-func setModCategories() {
-	ModCategories = []ModCategory{
-		{
-			Name:   "No modifiers",
-			Weight: ModWeightNoModifiers,
-			Handler: func(kc *KeyCombo) error {
-				return nil
-			},
-		},
-		{
-			Name:   "Control",
-			Weight: ModWeightControl,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				return nil
-			},
-		},
-		{
-			Name:   "Alt",
-			Weight: ModWeightAlt,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Alt = true
-				return nil
-			},
-		},
-		{
-			Name:   "Shift",
-			Weight: ModWeightShift,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				if kc.LowerRune == 0 && kc.UpperRune == 0 {
-					kc.Shift = true
-				}
-				return nil
-			},
-		},
-		{
-			Name:   "Meta",
-			Weight: ModWeightMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Alt",
-			Weight: ModWeightControlAlt,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Alt = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Shift",
-			Weight: ModWeightControlShift,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Shift = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Meta",
-			Weight: ModWeightControlMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Alt+Shift",
-			Weight: ModWeightAltShift,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Alt = true
-				kc.Shift = true
-				return nil
-			},
-		},
-		{
-			Name:   "Alt+Meta",
-			Weight: ModWeightAltMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Alt = true
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Shift+Meta",
-			Weight: ModWeightShiftMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Shift = true
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Alt+Shift",
-			Weight: ModWeightControlAltShift,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Alt = true
-				kc.Shift = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Alt+Meta",
-			Weight: ModWeightControlAltMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Alt = true
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Shift+Meta",
-			Weight: ModWeightControlShiftMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Shift = true
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Alt+Shift+Meta",
-			Weight: ModWeightAltShiftMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Alt = true
-				kc.Shift = true
-				kc.Meta = true
-				return nil
-			},
-		},
-		{
-			Name:   "Control+Alt+Shift+Meta",
-			Weight: ModWeightControlAltShiftMeta,
-			Handler: func(kc *KeyCombo) error {
-				if kc.Shift == true {
-					return nil
-				}
-				kc.Control = true
-				kc.Alt = true
-				kc.Shift = true
-				kc.Meta = true
-				return nil
-			},
-		},
-	}
+func measureStringWidth(s string) int {
+	return int(FontDrawer.MeasureString(s) >> 6)
 }
 
-func setBaseCategories() {
-	BaseCategories = []BaseCategory{
-		{
-			Name:   "Lower Letters",
-			Weight: BaseWeightLowerLetters,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CurrentLayout.LowerLetters[rand.IntN(len(CurrentLayout.LowerLetters))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CurrentLayout.LowerLetters) > 0
-			},
-		},
-		{
-			Name:   "Upper Letters",
-			Weight: BaseWeightUpperLetters,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CurrentLayout.UpperLetters[rand.IntN(len(CurrentLayout.UpperLetters))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CurrentLayout.UpperLetters) > 0
-			},
-		},
-		{
-			Name:   "Lower Symbols",
-			Weight: BaseWeightLowerSymbols,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CurrentLayout.LowerSymbols[rand.IntN(len(CurrentLayout.LowerSymbols))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CurrentLayout.LowerSymbols) > 0
-			},
-		},
-		{
-			Name:   "Upper Symbols",
-			Weight: BaseWeightUpperSymbols,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CurrentLayout.UpperSymbols[rand.IntN(len(CurrentLayout.UpperSymbols))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CurrentLayout.UpperSymbols) > 0
-			},
-		},
-		{
-			Name:   "Digits",
-			Weight: BaseWeightDigits,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CurrentLayout.Digits) > 0
-			},
-		},
-		{
-			Name:   "Non-Printable Keys 1",
-			Weight: BaseWeightNonPrintableKeys1,
-			Handler: func(kc *KeyCombo) error {
-				kc.Key = NonPrintableKeys1[rand.IntN(len(NonPrintableKeys1))]
-				return nil
-			},
-			Validator: func() bool {
-				return len(NonPrintableKeys1) > 0
-			},
-		},
-		{
-			Name:   "Non-Printable Keys 2",
-			Weight: BaseWeightNonPrintableKeys2,
-			Handler: func(kc *KeyCombo) error {
-				kc.Key = NonPrintableKeys2[rand.IntN(len(NonPrintableKeys2))]
-				return nil
-			},
-			Validator: func() bool {
-				return len(NonPrintableKeys2) > 0
-			},
-		},
-		{
-			Name:   "Custom Chars",
-			Weight: BaseWeightCustomChars,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CustomChars[rand.IntN(len(CustomChars))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CustomChars) > 0
-			},
-		},
-		{
-			Name:   "Custom Keys",
-			Weight: BaseWeightCustomKeys,
-			Handler: func(kc *KeyCombo) error {
-				kc.Key = CustomKeys[rand.IntN(len(CustomKeys))]
-				return nil
-			},
-			Validator: func() bool {
-				return len(CustomKeys) > 0
-			},
-		},
+func isKeyModifierToSkip(key ebiten.Key) bool {
+	switch key {
+	case ebiten.KeyShift, ebiten.KeyShiftLeft, ebiten.KeyShiftRight:
+		return true
+	case ebiten.KeyControl, ebiten.KeyControlLeft, ebiten.KeyControlRight:
+		return true
+	case ebiten.KeyAlt, ebiten.KeyAltLeft, ebiten.KeyAltRight:
+		return true
+	case ebiten.KeyMeta, ebiten.KeyMetaLeft, ebiten.KeyMetaRight:
+		return true
 	}
+	return false
 }
