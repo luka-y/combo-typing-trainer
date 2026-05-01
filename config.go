@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"image/color"
+	"os"
 	"strings"
 	"unicode/utf8"
 
@@ -68,8 +70,22 @@ type rawConfig struct {
 }
 
 func ParseConfig() error {
+	_, err := os.Stat("config.toml")
+	if errors.Is(err, os.ErrNotExist) {
+		defaultConfigBytes, err := os.ReadFile("assets/default-config.toml")
+		if err != nil {
+			return fmt.Errorf("error reading default config: %w", err)
+		}
+		if err := os.WriteFile("config.toml", defaultConfigBytes, 0644); err != nil {
+			return fmt.Errorf("error writing config.toml: %w", err)
+		}
+
+	} else if err != nil {
+		return fmt.Errorf("error with os.Stat-ing config.toml: %w", err)
+	}
+
 	var cfg rawConfig
-	metadata, err := toml.DecodeFile("assets/default-config.toml", &cfg)
+	metadata, err := toml.DecodeFile("config.toml", &cfg)
 	if err != nil {
 		return fmt.Errorf("error decoding toml file: %w", err)
 	}

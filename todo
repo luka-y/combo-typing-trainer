@@ -4,7 +4,7 @@
 micro to-do:
 
 priority 0:
-    read the actual config, not default, created default if none
+    add a comment with all available key string to config
     make all config errors so they shown to the user with a prompt "press any key to exit"
     make better validation
         include InitLayout in config validation
