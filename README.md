@@ -10,7 +10,7 @@ Inspired by [Programmer's Typing Practice by climech](https://climech.github.io/
 
 # Installation
 
-Download the binary from [the latest release](/releases).
+Download the binary from [the latest release](../../releases/latest).
 
 ### OR build from source
 
