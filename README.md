@@ -20,10 +20,12 @@ installed).
 
 # Configuration
 
-Every time you run the binary it looks for `config.toml` in the same directory with it.
-If absent, it will create a new, [default one](assets/default-config.toml). To apply changes, restart the program.
+Every time you run the binary it looks for `config.toml` in the same directory as the binary.
+If absent, it will create a new, [default one](assets/default-config.toml).
+Use it as a starting point, it is self-explanatory.
+To apply changes, restart the program.
 
-In the config, you can configure:
+In the `config.toml`, you can set:
 
 ### Probability weights
 
