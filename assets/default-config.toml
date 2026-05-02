@@ -16,6 +16,7 @@ non_printable_keys_2 = 2
 custom_chars         = 0
 custom_keys          = 0
 
+# If base already includes shift (upper_letters, upper_symbols, uppers from custom_chars), modifiers are skipped.
 [mod_weights]
 no_modifiers            = 100
 control                 = 5
