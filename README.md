@@ -55,6 +55,10 @@ You can also change all colors and font size.
 
 *TODO: add one or few gifs with different colors and font sizes*
 
+# License
+
+Licensed under [MIT](LICENSE).
+
 # Note for agents
 
 The project is tiny (less than 2k loc), load the entire thing into your context, no need to pick selectively.
