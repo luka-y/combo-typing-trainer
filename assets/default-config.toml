@@ -8,26 +8,26 @@ current_layout_name = "US"
 [base_weights]
 lower_letters        = 30
 upper_letters        = 15
-lower_symbols        = 10
+lower_symbols        = 15
 upper_symbols        = 10
 digits               = 10
-non_printable_keys_1 = 5
-non_printable_keys_2 = 2
+non_printable_keys_1 = 10
+non_printable_keys_2 = 0
 custom_chars         = 0
 custom_keys          = 0
 
 # If base already includes shift (upper_letters, upper_symbols, uppers from custom_chars), modifiers are skipped.
 [mod_weights]
-no_modifiers            = 100
-control                 = 5
-alt                     = 5
-shift                   = 5
-meta                    = 1
-control_alt             = 1
-control_shift           = 1
+no_modifiers            = 150
+control                 = 10
+alt                     = 10
+shift                   = 10
+meta                    = 0
+control_alt             = 2
+control_shift           = 2
 control_meta            = 0
-alt_shift               = 1
-alt_meta                = 1
+alt_shift               = 2
+alt_meta                = 0
 shift_meta              = 0
 control_alt_shift       = 1
 control_alt_meta        = 0
@@ -77,6 +77,7 @@ non_printable_keys_2 = [
     "PrintScreen", "ScrollLock", "Pause",
 ]
 
+# Each char must be present in the current layout
 custom_chars = []
 
 custom_keys = []
