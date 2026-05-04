@@ -61,6 +61,8 @@ control_alt_shift_meta  = 0
 #   NumpadEnter
 
 [non_inferred_base_categories]
+
+# Each key must NOT be in the current layout
 non_printable_keys_1 = [
     "Escape", "Tab", "CapsLock",
     "Delete", "Enter", "Space",
@@ -69,6 +71,7 @@ non_printable_keys_1 = [
     "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
 ]
 
+# Each key must NOT be in the current layout
 non_printable_keys_2 = [
     "F1", "F2", "F3", "F4",
     "F5", "F6", "F7", "F8",
@@ -80,6 +83,7 @@ non_printable_keys_2 = [
 # Each char must be present in the current layout
 custom_chars = []
 
+# Each key must NOT be in the current layout. Add char mapped to the key to custom_chars instead
 custom_keys = []
 
 [colors]

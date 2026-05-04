@@ -390,6 +390,27 @@ func ParseConfig() error {
 		}
 	}
 
+	for _, key := range CustomKeys {
+		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
+		if exist {
+			return fmt.Errorf("custom_keys contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
+		}
+	}
+
+	for _, key := range NonPrintableKeys1 {
+		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
+		if exist {
+			return fmt.Errorf("non_printable_keys_1 contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
+		}
+	}
+
+	for _, key := range NonPrintableKeys2 {
+		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
+		if exist {
+			return fmt.Errorf("non_printable_keys_2 contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
+		}
+	}
+
 	for _, category := range BaseCategories {
 		if category.Weight > 0 && !category.Validator() {
 			return fmt.Errorf("base category \"%s\" weight is more than zero while slice it is pulling from is empty", category.Name)
