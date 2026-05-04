@@ -4,7 +4,7 @@ Typing trainer that also covers keys (not just characters), shortcuts and key co
 It is just a stream of gibberish that, besides regular characters, can contain any key on the keyboard, as well as
 combinations with modifiers (Ctrl, Alt, Shift, Meta).
 
-*TODO: put gif of it here*
+![first gif](gifs/first-gif.gif)
 
 Inspired by [Programmer's Typing Practice by climech](https://climech.github.io/typing-practice/).
 
@@ -34,15 +34,18 @@ appear.
 For example:
 
 Just the letters:
-*TODO: gif of a stream*
+![just the letters](gifs/just-the-letters.gif)
 
-Just the symbols: *TODO: gif of a stream*
+Just the symbols:
+![just the symbols](gifs/just-the-symbols.gif)
 
-Just a selected set of keys: *TODO: gif of a stream*
+Just a selected set of keys:
+![selected set of keys](gifs/selected-set-of-keys.gif)
 
-Modifier heavy with just letters: *TODO: gif of a stream*
+Modifier heavy with just letters:
+![modifier heavy](gifs/modifier-heavy.gif)
 
-Or any combination of just the parts you want with any probabilities you might want.
+**Or any combination of just the parts you want with any probabilities you might want.**
 
 ### Layouts and custom categories
 
@@ -55,7 +58,7 @@ A category is just a set of chars or keys that you can set your own probability 
 
 You can also change all colors and font size.
 
-*TODO: add one or few gifs with different colors and font sizes*
+![light theme](gifs/light-theme.gif)
 
 # License
 
