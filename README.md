@@ -14,13 +14,13 @@ Download the binary from [the latest release](../../releases/latest).
 
 ### OR build from source
 
-Clone the repo and `go build .` (you would need Go and
+Clone the repo and `go build .` (you would need [Go](https://go.dev/) and
 [ebiten dependencies](https://ebitengine.org/en/documents/install.html)
 installed).
 
 # Configuration
 
-Every time you run the binary it looks for `config.toml` in the same directory as the binary.
+Every time you run the binary it looks for `~/.config/combo-typing-trainer/config.toml`.
 If absent, it will create a new, [default one](assets/default-config.toml).
 Use it as a starting point, it is self-explanatory.
 To apply changes, restart the program.

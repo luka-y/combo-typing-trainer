@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image/color"
 	"os"
+	"path/filepath"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -71,22 +72,33 @@ type rawConfig struct {
 }
 
 func ParseConfig() error {
-	_, err := os.Stat("config.toml")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return fmt.Errorf("error getting user home dir: %w", err)
+	}
+	configDirPath := filepath.Join(homeDir, ".config", "combo-typing-trainer")
+	configPath := filepath.Join(configDirPath, "config.toml")
+
+	_, err = os.Stat(configPath)
 	if errors.Is(err, os.ErrNotExist) {
 		defaultConfigBytes, err := assets.ReadFile("assets/default-config.toml") //os.ReadFile("assets/")
 		if err != nil {
 			return fmt.Errorf("error reading default config: %w", err)
 		}
-		if err := os.WriteFile("config.toml", defaultConfigBytes, 0644); err != nil {
-			return fmt.Errorf("error writing config.toml: %w", err)
+		err = os.MkdirAll(configDirPath, 0755)
+		if err != nil {
+			return fmt.Errorf("error creating config directory (%s): %w", configDirPath, err)
+		}
+		if err := os.WriteFile(configPath, defaultConfigBytes, 0644); err != nil {
+			return fmt.Errorf("error writing config file (%s): %w", configPath, err)
 		}
 
 	} else if err != nil {
-		return fmt.Errorf("error with os.Stat-ing config.toml: %w", err)
+		return fmt.Errorf("error with os.Stat-ing the config file (%s): %w", configPath, err)
 	}
 
 	var cfg rawConfig
-	metadata, err := toml.DecodeFile("config.toml", &cfg)
+	metadata, err := toml.DecodeFile(configPath, &cfg)
 	if err != nil {
 		return fmt.Errorf("error decoding toml file: %w", err)
 	}
