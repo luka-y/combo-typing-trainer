@@ -1,5 +1,5 @@
 # combo-typing-trainer default config (TOML v1.1.0)
-# The program requires config.toml (exact name) in directory alongside it.
+# The program requires ~/.config/combo-typing-trainer/config.toml (or %USERPROFILE%\.config\combo-typing-trainer\config.toml on Windows).
 # If not found, it will create a new, default one.
 
 font_size           = 18
