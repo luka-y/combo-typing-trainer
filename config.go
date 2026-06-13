@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"image/color"
 	"os"
@@ -77,24 +76,36 @@ func ParseConfig() error {
 		return fmt.Errorf("error getting user home dir: %w", err)
 	}
 	configDirPath := filepath.Join(homeDir, ".config", "combo-typing-trainer")
-	configPath := filepath.Join(configDirPath, "config.toml")
 
-	_, err = os.Stat(configPath)
-	if errors.Is(err, os.ErrNotExist) {
+	if err := os.MkdirAll(configDirPath, 0755); err != nil {
+		return fmt.Errorf("error creating config directory (%s): %w", configDirPath, err)
+	}
+	configDirEntries, err := os.ReadDir(configDirPath)
+	if err != nil {
+		return fmt.Errorf("error reading config dir (%s): %w", configDirPath, err)
+	}
+
+	tomlFilesCount := 0
+	configPath := ""
+	for _, entry := range configDirEntries {
+		if strings.HasSuffix(entry.Name(), ".toml") {
+			tomlFilesCount += 1
+			if tomlFilesCount > 1 {
+				return fmt.Errorf("more than one .toml file in config dir")
+			}
+			configPath = filepath.Join(configDirPath, entry.Name())
+		}
+	}
+
+	if tomlFilesCount == 0 {
+		configPath = filepath.Join(configDirPath, "default-config.toml")
 		defaultConfigBytes, err := assets.ReadFile("assets/default-config.toml") //os.ReadFile("assets/")
 		if err != nil {
 			return fmt.Errorf("error reading default config: %w", err)
 		}
-		err = os.MkdirAll(configDirPath, 0755)
-		if err != nil {
-			return fmt.Errorf("error creating config directory (%s): %w", configDirPath, err)
-		}
 		if err := os.WriteFile(configPath, defaultConfigBytes, 0644); err != nil {
 			return fmt.Errorf("error writing config file (%s): %w", configPath, err)
 		}
-
-	} else if err != nil {
-		return fmt.Errorf("error with os.Stat-ing the config file (%s): %w", configPath, err)
 	}
 
 	var cfg rawConfig
