@@ -4,7 +4,9 @@
 micro to-do:
 
 priority 0:
-    done
+    make 10+ default configs. Only 1 enabled by default, other with something like `.toml.disabled`
+        at the end of the file. These are like stages or levels to go through. Embed too.
+
 
 priority 2:
 
