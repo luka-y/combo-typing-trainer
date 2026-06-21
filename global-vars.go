@@ -48,7 +48,6 @@ var (
 	BaseWeightNonPrintableKeys1 int
 	BaseWeightNonPrintableKeys2 int
 	BaseWeightCustomChars       int
-	BaseWeightCustomKeys        int
 
 	ModWeightNoModifiers         int
 	ModWeightControl             int

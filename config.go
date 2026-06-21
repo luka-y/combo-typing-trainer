@@ -52,7 +52,6 @@ type rawConfig struct {
 		NonPrintableKeys1 []string `toml:"non_printable_keys_1"`
 		NonPrintableKeys2 []string `toml:"non_printable_keys_2"`
 		CustomChars       []string `toml:"custom_chars"`
-		CustomKeys        []string `toml:"custom_keys"`
 	} `toml:"non_inferred_base_categories"`
 
 	Colors struct {
@@ -247,7 +246,7 @@ func ParseConfig() error {
 	ModWeightControlAltShiftMeta = cfg.ModWeights.ControlAltShiftMeta
 
 	baseWeightsSum := BaseWeightLowerLetters + BaseWeightUpperLetters + BaseWeightLowerSymbols + BaseWeightUpperSymbols +
-		BaseWeightDigits + BaseWeightNonPrintableKeys1 + BaseWeightNonPrintableKeys2 + BaseWeightCustomChars + BaseWeightCustomKeys
+		BaseWeightDigits + BaseWeightNonPrintableKeys1 + BaseWeightNonPrintableKeys2 + BaseWeightCustomChars
 	if baseWeightsSum == 0 {
 		return fmt.Errorf("sum of base_weights entries equals zero")
 	}
