@@ -4,8 +4,23 @@
 micro to-do:
 
 priority 0:
-    make 10+ default configs. Only 1 enabled by default, other with something like `.toml.disabled`
-        at the end of the file. These are like stages or levels to go through. Embed too.
+    add 5 non-printable keys config slices. Remove custom keys.
+        1) just space
+        2) delete, enter, esc and tab
+        3) the rest of base
+        4) the lower layer (same as 2 right now)
+        5) spare
+    change default-config to demo-config, adjust the comment there, so it represents
+        the actual functionality.
+    add 6 following configs. These are "levels", "stages" to go through.
+        1) lowercase letters + space
+        2) prev + uppercase letters
+        3) prev + non-printable 2 (delete, enter, esc and tab)
+        4) prev + all 4 single modifiers
+        5) pre-prev (remove the modifiers) + numbers and shifter numbers symbols
+        6) prev + all 4 single modifiers
+        Then same 4-8 levels as prev 2 to cover the rest of the base layer.
+        Embed all of these as `toml.disabled`
 
 
 priority 2:
@@ -14,6 +29,8 @@ priority 5:
 
 priority 10:
     run profiler to see if getCombo or drawing (or anything else) needs optimization.
-    make an ability to select font in config. get it from the system, instead of from the asset (?)
-    make TrimDistanceBeforeCurrent and GenerateGibberishDistanceAfterCurrent calculated on startup based on screen width and face.
+    make an ability to select font in config. get it from the system, instead of from
+        the asset (?)
+    make TrimDistanceBeforeCurrent and GenerateGibberishDistanceAfterCurrent
+        calculated on startup based on screen width and face.
     react to width change, don't lock to precalculated on startup.
