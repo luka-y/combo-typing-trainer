@@ -27,7 +27,6 @@ type rawConfig struct {
 		NonPrintableKeys1 int `toml:"non_printable_keys_1"`
 		NonPrintableKeys2 int `toml:"non_printable_keys_2"`
 		CustomChars       int `toml:"custom_chars"`
-		CustomKeys        int `toml:"custom_keys"`
 	} `toml:"base_weights"`
 
 	ModWeights struct {
@@ -167,11 +166,6 @@ func ParseConfig() error {
 	}
 	BaseWeightCustomChars = cfg.BaseWeights.CustomChars
 
-	if !metadata.IsDefined("base_weights", "custom_keys") || cfg.BaseWeights.CustomKeys < 0 {
-		return fmt.Errorf("missed or negative int entry: base_weights.custom_keys")
-	}
-	BaseWeightCustomKeys = cfg.BaseWeights.CustomKeys
-
 	if !metadata.IsDefined("mod_weights", "no_modifiers") || cfg.ModWeights.NoModifiers < 0 {
 		return fmt.Errorf("missed or negative int entry: mod_weights.no_modifiers")
 	}
@@ -291,17 +285,6 @@ func ParseConfig() error {
 		NonPrintableKeys2 = append(NonPrintableKeys2, key)
 	}
 
-	if !metadata.IsDefined("non_inferred_base_categories", "custom_keys") {
-		return fmt.Errorf("missed []string entry: non_inferred_base_categories.custom_keys")
-	}
-	for _, rawKey := range cfg.NonInferredBaseCategories.CustomKeys {
-		key, exist := stringToEbitenKeyMap[rawKey]
-		if !exist {
-			return fmt.Errorf("custom_keys includes a key that does not exist: %s", rawKey)
-		}
-		CustomKeys = append(CustomKeys, key)
-	}
-
 	if !metadata.IsDefined("non_inferred_base_categories", "custom_chars") {
 		return fmt.Errorf("missed []string entry: non_inferred_base_categories.custom_chars")
 	}
@@ -410,13 +393,6 @@ func ParseConfig() error {
 		_, exist := CurrentLayout.ReverseKeyMap[r]
 		if !exist {
 			return fmt.Errorf("custom_chars contains a char '%c' that is absent in the current layout", r)
-		}
-	}
-
-	for _, key := range CustomKeys {
-		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
-		if exist {
-			return fmt.Errorf("custom_keys contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
 		}
 	}
 

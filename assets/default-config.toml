@@ -14,7 +14,6 @@ digits               = 10
 non_printable_keys_1 = 10
 non_printable_keys_2 = 0
 custom_chars         = 0
-custom_keys          = 0
 
 # If base already includes shift (upper_letters, upper_symbols, uppers from custom_chars), modifiers are skipped.
 [mod_weights]
@@ -82,9 +81,6 @@ non_printable_keys_2 = [
 
 # Each char must be present in the current layout
 custom_chars = []
-
-# Each key must NOT be in the current layout. Add char mapped to the key to custom_chars instead
-custom_keys = []
 
 [colors]
 background          = "#181616"

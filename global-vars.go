@@ -70,7 +70,6 @@ var (
 	NonPrintableKeys1 []ebiten.Key
 	NonPrintableKeys2 []ebiten.Key
 	CustomChars       []rune
-	CustomKeys        []ebiten.Key
 
 	UpcomingComboColor      color.RGBA
 	CurrentComboColor       color.RGBA

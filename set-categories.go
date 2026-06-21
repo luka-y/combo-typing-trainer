@@ -92,17 +92,6 @@ func setBaseCategories() {
 				return len(CustomChars) > 0
 			},
 		},
-		{
-			Name:   "Custom Keys",
-			Weight: BaseWeightCustomKeys,
-			Handler: func(kc *KeyCombo) error {
-				kc.Key = CustomKeys[rand.IntN(len(CustomKeys))]
-				return nil
-			},
-			Validator: func() bool {
-				return len(CustomKeys) > 0
-			},
-		},
 	}
 }
 
