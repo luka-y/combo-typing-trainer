@@ -102,8 +102,8 @@ func ParseConfig() error {
 	}
 
 	if tomlFilesCount == 0 {
-		configPath = filepath.Join(configDirPath, "default-config.toml")
-		defaultConfigBytes, err := assets.ReadFile("assets/default-config.toml") //os.ReadFile("assets/")
+		configPath = filepath.Join(configDirPath, "demo-config.toml")
+		defaultConfigBytes, err := assets.ReadFile("assets/demo-config.toml") //os.ReadFile("assets/")
 		if err != nil {
 			return fmt.Errorf("error reading default config: %w", err)
 		}

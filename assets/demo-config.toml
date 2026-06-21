@@ -1,6 +1,6 @@
-# combo-typing-trainer default config (TOML v1.1.0)
-# The program requires ~/.config/combo-typing-trainer/config.toml (or %USERPROFILE%\.config\combo-typing-trainer\config.toml on Windows).
-# If not found, it will create a new, default one.
+# combo-typing-trainer demo config (TOML v1.1.0)
+# The program requires a single ~/.config/combo-typing-trainer/*.toml (or %USERPROFILE%\.config\combo-typing-trainer\*.toml on Windows).
+# If the directory is empty or absent it will populate it with default configs
 
 font_size           = 18
 current_layout_name = "US"
@@ -12,8 +12,8 @@ lower_symbols        = 15
 upper_symbols        = 10
 digits               = 10
 non_printable_keys_1 = 10
-non_printable_keys_2 = 0
-non_printable_keys_3 = 0
+non_printable_keys_2 = 7
+non_printable_keys_3 = 3
 non_printable_keys_4 = 0
 non_printable_keys_5 = 0
 custom_chars         = 0
@@ -66,27 +66,30 @@ control_alt_shift_meta  = 0
 
 # Each key must NOT be in the current layout
 non_printable_keys_1 = [
-    "Escape", "Tab", "CapsLock",
-    "Delete", "Enter", "Space",
-    "Insert", "Home", "End",
-    "PageUp", "PageDown",
-    "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+    "Space"
 ]
 
 # Each key must NOT be in the current layout
 non_printable_keys_2 = [
+    "Delete", "Enter", "Escape", "Tab"
+]
+
+# Each key must NOT be in the current layout
+non_printable_keys_3 = [
+    "PageUp", "PageDown",
+    "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+    "Insert", "Home", "End",
+    "CapsLock",
+]
+
+# Each key must NOT be in the current layout
+non_printable_keys_4 = [
     "F1", "F2", "F3", "F4",
     "F5", "F6", "F7", "F8",
     "F9", "F10", "F11", "F12",
     "F13", "F14", "F15", "F16",
     "PrintScreen", "ScrollLock", "Pause",
 ]
-
-# Each key must NOT be in the current layout
-non_printable_keys_3 = []
-
-# Each key must NOT be in the current layout
-non_printable_keys_4 = []
 
 # Each key must NOT be in the current layout
 non_printable_keys_5 = []

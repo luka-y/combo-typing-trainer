@@ -21,7 +21,7 @@ installed).
 # Configuration
 
 Every time you run the binary it looks for `~/.config/combo-typing-trainer/config.toml`.
-If absent, it will create a new, [default one](assets/default-config.toml).
+If absent, it will create a new, [default one](assets/demo-config.toml).
 Use it as a starting point, it is self-explanatory.
 To apply changes, restart the program.
 

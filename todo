@@ -4,14 +4,6 @@
 micro to-do:
 
 priority 0:
-    add 5 non-printable keys config slices. Remove custom keys.
-        1) just space
-        2) delete, enter, esc and tab
-        3) the rest of base
-        4) the lower layer (same as 2 right now)
-        5) spare
-    change default-config to demo-config, adjust the comment there, so it represents
-        the actual functionality.
     add 6 following configs. These are "levels", "stages" to go through.
         1) lowercase letters + space
         2) prev + uppercase letters
