@@ -26,6 +26,9 @@ type rawConfig struct {
 		Digits            int `toml:"digits"`
 		NonPrintableKeys1 int `toml:"non_printable_keys_1"`
 		NonPrintableKeys2 int `toml:"non_printable_keys_2"`
+		NonPrintableKeys3 int `toml:"non_printable_keys_3"`
+		NonPrintableKeys4 int `toml:"non_printable_keys_4"`
+		NonPrintableKeys5 int `toml:"non_printable_keys_5"`
 		CustomChars       int `toml:"custom_chars"`
 	} `toml:"base_weights"`
 
@@ -51,6 +54,9 @@ type rawConfig struct {
 	NonInferredBaseCategories struct {
 		NonPrintableKeys1 []string `toml:"non_printable_keys_1"`
 		NonPrintableKeys2 []string `toml:"non_printable_keys_2"`
+		NonPrintableKeys3 []string `toml:"non_printable_keys_3"`
+		NonPrintableKeys4 []string `toml:"non_printable_keys_4"`
+		NonPrintableKeys5 []string `toml:"non_printable_keys_5"`
 		CustomChars       []string `toml:"custom_chars"`
 	} `toml:"non_inferred_base_categories"`
 
@@ -160,6 +166,21 @@ func ParseConfig() error {
 	}
 	BaseWeightNonPrintableKeys2 = cfg.BaseWeights.NonPrintableKeys2
 
+	if !metadata.IsDefined("base_weights", "non_printable_keys_3") || cfg.BaseWeights.NonPrintableKeys3 < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.non_printable_keys_3")
+	}
+	BaseWeightNonPrintableKeys3 = cfg.BaseWeights.NonPrintableKeys3
+
+	if !metadata.IsDefined("base_weights", "non_printable_keys_4") || cfg.BaseWeights.NonPrintableKeys4 < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.non_printable_keys_4")
+	}
+	BaseWeightNonPrintableKeys4 = cfg.BaseWeights.NonPrintableKeys4
+
+	if !metadata.IsDefined("base_weights", "non_printable_keys_5") || cfg.BaseWeights.NonPrintableKeys5 < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.non_printable_keys_5")
+	}
+	BaseWeightNonPrintableKeys5 = cfg.BaseWeights.NonPrintableKeys5
+
 	if !metadata.IsDefined("base_weights", "custom_chars") || cfg.BaseWeights.CustomChars < 0 {
 		return fmt.Errorf("missed or negative int entry: base_weights.custom_chars")
 	}
@@ -246,7 +267,8 @@ func ParseConfig() error {
 	ModWeightControlAltShiftMeta = cfg.ModWeights.ControlAltShiftMeta
 
 	baseWeightsSum := BaseWeightLowerLetters + BaseWeightUpperLetters + BaseWeightLowerSymbols + BaseWeightUpperSymbols +
-		BaseWeightDigits + BaseWeightNonPrintableKeys1 + BaseWeightNonPrintableKeys2 + BaseWeightCustomChars
+		BaseWeightDigits + BaseWeightNonPrintableKeys1 + BaseWeightNonPrintableKeys2 + BaseWeightNonPrintableKeys3 +
+		BaseWeightNonPrintableKeys4 + BaseWeightNonPrintableKeys5 + BaseWeightCustomChars
 	if baseWeightsSum == 0 {
 		return fmt.Errorf("sum of base_weights entries equals zero")
 	}
@@ -282,6 +304,39 @@ func ParseConfig() error {
 			return fmt.Errorf("non_printable_keys_2 includes a key that does not exist: %s", rawKey)
 		}
 		NonPrintableKeys2 = append(NonPrintableKeys2, key)
+	}
+
+	if !metadata.IsDefined("non_inferred_base_categories", "non_printable_keys_3") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.non_printable_keys_3")
+	}
+	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys3 {
+		key, exist := stringToEbitenKeyMap[rawKey]
+		if !exist {
+			return fmt.Errorf("non_printable_keys_3 includes a key that does not exist: %s", rawKey)
+		}
+		NonPrintableKeys3 = append(NonPrintableKeys3, key)
+	}
+
+	if !metadata.IsDefined("non_inferred_base_categories", "non_printable_keys_4") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.non_printable_keys_4")
+	}
+	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys4 {
+		key, exist := stringToEbitenKeyMap[rawKey]
+		if !exist {
+			return fmt.Errorf("non_printable_keys_4 includes a key that does not exist: %s", rawKey)
+		}
+		NonPrintableKeys4 = append(NonPrintableKeys4, key)
+	}
+
+	if !metadata.IsDefined("non_inferred_base_categories", "non_printable_keys_5") {
+		return fmt.Errorf("missed []string entry: non_inferred_base_categories.non_printable_keys_5")
+	}
+	for _, rawKey := range cfg.NonInferredBaseCategories.NonPrintableKeys5 {
+		key, exist := stringToEbitenKeyMap[rawKey]
+		if !exist {
+			return fmt.Errorf("non_printable_keys_5 includes a key that does not exist: %s", rawKey)
+		}
+		NonPrintableKeys5 = append(NonPrintableKeys5, key)
 	}
 
 	if !metadata.IsDefined("non_inferred_base_categories", "custom_chars") {
@@ -406,6 +461,27 @@ func ParseConfig() error {
 		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
 		if exist {
 			return fmt.Errorf("non_printable_keys_2 contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
+		}
+	}
+
+	for _, key := range NonPrintableKeys3 {
+		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
+		if exist {
+			return fmt.Errorf("non_printable_keys_3 contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
+		}
+	}
+
+	for _, key := range NonPrintableKeys4 {
+		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
+		if exist {
+			return fmt.Errorf("non_printable_keys_4 contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
+		}
+	}
+
+	for _, key := range NonPrintableKeys5 {
+		_, exist := CurrentLayout.KeyMap[KeyWithShift{Key: key, Shift: false}]
+		if exist {
+			return fmt.Errorf("non_printable_keys_5 contain a key %q that is present in the current layout. Use custom_chars instead", key.String())
 		}
 	}
 

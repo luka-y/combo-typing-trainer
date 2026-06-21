@@ -82,6 +82,39 @@ func setBaseCategories() {
 			},
 		},
 		{
+			Name:   "Non-Printable Keys 3",
+			Weight: BaseWeightNonPrintableKeys3,
+			Handler: func(kc *KeyCombo) error {
+				kc.Key = NonPrintableKeys3[rand.IntN(len(NonPrintableKeys3))]
+				return nil
+			},
+			Validator: func() bool {
+				return len(NonPrintableKeys3) > 0
+			},
+		},
+		{
+			Name:   "Non-Printable Keys 4",
+			Weight: BaseWeightNonPrintableKeys4,
+			Handler: func(kc *KeyCombo) error {
+				kc.Key = NonPrintableKeys4[rand.IntN(len(NonPrintableKeys4))]
+				return nil
+			},
+			Validator: func() bool {
+				return len(NonPrintableKeys4) > 0
+			},
+		},
+		{
+			Name:   "Non-Printable Keys 5",
+			Weight: BaseWeightNonPrintableKeys5,
+			Handler: func(kc *KeyCombo) error {
+				kc.Key = NonPrintableKeys5[rand.IntN(len(NonPrintableKeys5))]
+				return nil
+			},
+			Validator: func() bool {
+				return len(NonPrintableKeys5) > 0
+			},
+		},
+		{
 			Name:   "Custom Chars",
 			Weight: BaseWeightCustomChars,
 			Handler: func(kc *KeyCombo) error {

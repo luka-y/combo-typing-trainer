@@ -47,6 +47,9 @@ var (
 	BaseWeightDigits            int
 	BaseWeightNonPrintableKeys1 int
 	BaseWeightNonPrintableKeys2 int
+	BaseWeightNonPrintableKeys3 int
+	BaseWeightNonPrintableKeys4 int
+	BaseWeightNonPrintableKeys5 int
 	BaseWeightCustomChars       int
 
 	ModWeightNoModifiers         int
@@ -68,6 +71,9 @@ var (
 
 	NonPrintableKeys1 []ebiten.Key
 	NonPrintableKeys2 []ebiten.Key
+	NonPrintableKeys3 []ebiten.Key
+	NonPrintableKeys4 []ebiten.Key
+	NonPrintableKeys5 []ebiten.Key
 	CustomChars       []rune
 
 	UpcomingComboColor      color.RGBA

@@ -13,6 +13,9 @@ upper_symbols        = 10
 digits               = 10
 non_printable_keys_1 = 10
 non_printable_keys_2 = 0
+non_printable_keys_3 = 0
+non_printable_keys_4 = 0
+non_printable_keys_5 = 0
 custom_chars         = 0
 
 # If base already includes shift (upper_letters, upper_symbols, uppers from custom_chars), modifiers are skipped.
@@ -34,7 +37,7 @@ control_shift_meta      = 0
 alt_shift_meta          = 0
 control_alt_shift_meta  = 0
 
-# Available key names (exact strings) for non_printable_keys_1/2 and layouts:
+# Available key names (exact strings) for non_printable_keys_1/2/3/4/5 and layouts:
 #   A, B, C, D, E, F, G, H, I, J, K, L, M,
 #   N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
 #   Digit0, Digit1, Digit2, Digit3, Digit4,
@@ -78,6 +81,15 @@ non_printable_keys_2 = [
     "F13", "F14", "F15", "F16",
     "PrintScreen", "ScrollLock", "Pause",
 ]
+
+# Each key must NOT be in the current layout
+non_printable_keys_3 = []
+
+# Each key must NOT be in the current layout
+non_printable_keys_4 = []
+
+# Each key must NOT be in the current layout
+non_printable_keys_5 = []
 
 # Each char must be present in the current layout
 custom_chars = []
