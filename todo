@@ -4,7 +4,8 @@
 micro to-do:
 
 priority 0:
-    add 6 following configs. These are "levels", "stages" to go through.
+    logic for populating the config dir only if dir is absent of empty
+    populate with 6 following stages
         1) lowercase letters + space
         2) prev + uppercase letters
         3) prev + non-printable 2 (delete, enter, esc and tab)
@@ -12,7 +13,6 @@ priority 0:
         5) pre-prev (remove the modifiers) + numbers and shifter numbers symbols
         6) prev + all 4 single modifiers
         Then same 4-8 levels as prev 2 to cover the rest of the base layer.
-        Embed all of these as `toml.disabled`
 
 
 priority 2:

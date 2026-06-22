@@ -12,17 +12,17 @@ current_layout_name = "US"
 lower_letters        = 30
 upper_letters        = 15
 digits               = 10
-upper-digit-symbols  = 10
-lower_symbols        = 15
-upper_symbols        = 10
-non_printable_keys_1 = 10
-non_printable_keys_2 = 7
-non_printable_keys_3 = 3
+upper-digit-symbols  = 7
+lower_symbols        = 7
+upper_symbols        = 7
+non_printable_keys_1 = 5
+non_printable_keys_2 = 2
+non_printable_keys_3 = 1
 non_printable_keys_4 = 0
 non_printable_keys_5 = 0
 custom_chars         = 0
 
-# If base already includes shift (upper_letters, upper_symbols, uppers from custom_chars), modifiers are skipped.
+# If base already includes shift (upper_letters, upper-digit-symbols, upper_symbols, uppers from custom_chars), modifiers are skipped.
 [mod_weights]
 no_modifiers            = 150
 control                 = 10

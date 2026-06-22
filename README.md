@@ -20,12 +20,9 @@ installed).
 
 # Configuration
 
-Every time you run the binary it looks for `~/.config/combo-typing-trainer/config.toml`.
-If absent, it will create a new, [default one](assets/demo-config.toml).
-Use it as a starting point, it is self-explanatory.
-To apply changes, restart the program.
+The "stream" is highly configurable. [Example of a config](assets/demo-config.toml).
 
-In the `config.toml`, you can set:
+In there, you can set:
 
 ### Probability weights
 
