@@ -4,15 +4,7 @@
 micro to-do:
 
 priority 0:
-    populate with 6 following stages
-        1) lowercase letters + space
-        2) prev + uppercase letters
-        3) prev + non-printable 2 (delete, enter, esc and tab)
-        4) prev + all 4 single modifiers
-        5) pre-prev (remove the modifiers) + numbers and shifter numbers symbols
-        6) prev + all 4 single modifiers
-        Then same 4-8 levels as prev 2 to cover the rest of the base layer.
-
+    all stages
 
 priority 2:
 
