@@ -21,9 +21,10 @@ type rawConfig struct {
 	BaseWeights struct {
 		LowerLetters      int `toml:"lower_letters"`
 		UpperLetters      int `toml:"upper_letters"`
+		Digits            int `toml:"digits"`
+		UpperDigitSymbols int `toml:"upper-digit-symbols"`
 		LowerSymbols      int `toml:"lower_symbols"`
 		UpperSymbols      int `toml:"upper_symbols"`
-		Digits            int `toml:"digits"`
 		NonPrintableKeys1 int `toml:"non_printable_keys_1"`
 		NonPrintableKeys2 int `toml:"non_printable_keys_2"`
 		NonPrintableKeys3 int `toml:"non_printable_keys_3"`
@@ -141,6 +142,16 @@ func ParseConfig() error {
 	}
 	BaseWeightUpperLetters = cfg.BaseWeights.UpperLetters
 
+	if !metadata.IsDefined("base_weights", "digits") || cfg.BaseWeights.Digits < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.digits")
+	}
+	BaseWeightDigits = cfg.BaseWeights.Digits
+
+	if !metadata.IsDefined("base_weights", "upper-digit-symbols") || cfg.BaseWeights.UpperDigitSymbols < 0 {
+		return fmt.Errorf("missed or negative int entry: base_weights.upper-digit-symbols")
+	}
+	BaseWeightUpperDigitSymbols = cfg.BaseWeights.UpperDigitSymbols
+
 	if !metadata.IsDefined("base_weights", "lower_symbols") || cfg.BaseWeights.LowerSymbols < 0 {
 		return fmt.Errorf("missed or negative int entry: base_weights.lower_symbols")
 	}
@@ -150,11 +161,6 @@ func ParseConfig() error {
 		return fmt.Errorf("missed or negative int entry: base_weights.upper_symbols")
 	}
 	BaseWeightUpperSymbols = cfg.BaseWeights.UpperSymbols
-
-	if !metadata.IsDefined("base_weights", "digits") || cfg.BaseWeights.Digits < 0 {
-		return fmt.Errorf("missed or negative int entry: base_weights.digits")
-	}
-	BaseWeightDigits = cfg.BaseWeights.Digits
 
 	if !metadata.IsDefined("base_weights", "non_printable_keys_1") || cfg.BaseWeights.NonPrintableKeys1 < 0 {
 		return fmt.Errorf("missed or negative int entry: base_weights.non_printable_keys_1")
@@ -266,9 +272,9 @@ func ParseConfig() error {
 	}
 	ModWeightControlAltShiftMeta = cfg.ModWeights.ControlAltShiftMeta
 
-	baseWeightsSum := BaseWeightLowerLetters + BaseWeightUpperLetters + BaseWeightLowerSymbols + BaseWeightUpperSymbols +
-		BaseWeightDigits + BaseWeightNonPrintableKeys1 + BaseWeightNonPrintableKeys2 + BaseWeightNonPrintableKeys3 +
-		BaseWeightNonPrintableKeys4 + BaseWeightNonPrintableKeys5 + BaseWeightCustomChars
+	baseWeightsSum := BaseWeightLowerLetters + BaseWeightUpperLetters + BaseWeightDigits + BaseWeightUpperDigitSymbols +
+		BaseWeightLowerSymbols + BaseWeightUpperSymbols + BaseWeightNonPrintableKeys1 + BaseWeightNonPrintableKeys2 +
+		BaseWeightNonPrintableKeys3 + BaseWeightNonPrintableKeys4 + BaseWeightNonPrintableKeys5 + BaseWeightCustomChars
 	if baseWeightsSum == 0 {
 		return fmt.Errorf("sum of base_weights entries equals zero")
 	}
@@ -527,7 +533,7 @@ func getLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, err
 	res.KeyMap = keyMap
 
 	reverseKeyMap := make(map[rune]KeyWithShift)
-	var lowerLetters, upperLetters, digits, lowerSymbols, upperSymbols []rune
+	var lowerLetters, upperLetters, digits, upperDigitSymbols, lowerSymbols, upperSymbols []rune
 
 	for keyWithShift, r := range keyMap {
 		if _, alreadyExist := reverseKeyMap[r]; alreadyExist {
@@ -542,6 +548,8 @@ func getLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, err
 			upperLetters = append(upperLetters, r)
 		} else if unicode.IsDigit(r) {
 			digits = append(digits, r)
+		} else if shifted && unicode.IsDigit(keyMap[KeyWithShift{Key: keyWithShift.Key, Shift: false}]) {
+			upperDigitSymbols = append(upperDigitSymbols, r)
 		} else {
 			if !shifted {
 				lowerSymbols = append(lowerSymbols, r)
@@ -556,6 +564,7 @@ func getLayoutFromKeyMap(name string, keyMap map[KeyWithShift]rune) (Layout, err
 	res.LowerLetters = lowerLetters
 	res.UpperLetters = upperLetters
 	res.Digits = digits
+	res.UpperDigitSymbols = upperDigitSymbols
 	res.LowerSymbols = lowerSymbols
 	res.UpperSymbols = upperSymbols
 

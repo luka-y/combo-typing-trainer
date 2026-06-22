@@ -1,6 +1,9 @@
-# combo-typing-trainer demo config (TOML v1.1.0)
+# combo-typing-trainer config (TOML v1.1.0)
 # The program requires a single ~/.config/combo-typing-trainer/*.toml (or %USERPROFILE%\.config\combo-typing-trainer\*.toml on Windows).
-# If the directory is empty or absent it will populate it with default configs
+# More than one will error, so add `.disabled` or `.inactive` or `.*anything` to each inactive one.
+# If the directory is empty or absent it will populate it with default configs (demo + stages)
+
+# default demo-config
 
 font_size           = 18
 current_layout_name = "US"
@@ -8,9 +11,10 @@ current_layout_name = "US"
 [base_weights]
 lower_letters        = 30
 upper_letters        = 15
+digits               = 10
+upper-digit-symbols  = 10
 lower_symbols        = 15
 upper_symbols        = 10
-digits               = 10
 non_printable_keys_1 = 10
 non_printable_keys_2 = 7
 non_printable_keys_3 = 3

@@ -27,6 +27,28 @@ func setBaseCategories() {
 			},
 		},
 		{
+			Name:   "Digits",
+			Weight: BaseWeightDigits,
+			Handler: func(kc *KeyCombo) error {
+				kc.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
+				return nil
+			},
+			Validator: func() bool {
+				return len(CurrentLayout.Digits) > 0
+			},
+		},
+		{
+			Name:   "Upper Digit Symbols",
+			Weight: BaseWeightUpperDigitSymbols,
+			Handler: func(kc *KeyCombo) error {
+				kc.setKeyComboBasedOnRune(CurrentLayout.UpperDigitSymbols[rand.IntN(len(CurrentLayout.UpperDigitSymbols))])
+				return nil
+			},
+			Validator: func() bool {
+				return len(CurrentLayout.UpperDigitSymbols) > 0
+			},
+		},
+		{
 			Name:   "Lower Symbols",
 			Weight: BaseWeightLowerSymbols,
 			Handler: func(kc *KeyCombo) error {
@@ -46,17 +68,6 @@ func setBaseCategories() {
 			},
 			Validator: func() bool {
 				return len(CurrentLayout.UpperSymbols) > 0
-			},
-		},
-		{
-			Name:   "Digits",
-			Weight: BaseWeightDigits,
-			Handler: func(kc *KeyCombo) error {
-				kc.setKeyComboBasedOnRune(CurrentLayout.Digits[rand.IntN(len(CurrentLayout.Digits))])
-				return nil
-			},
-			Validator: func() bool {
-				return len(CurrentLayout.Digits) > 0
 			},
 		},
 		{

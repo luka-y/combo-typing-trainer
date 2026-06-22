@@ -45,6 +45,7 @@ var (
 	BaseWeightLowerSymbols      int
 	BaseWeightUpperSymbols      int
 	BaseWeightDigits            int
+	BaseWeightUpperDigitSymbols int
 	BaseWeightNonPrintableKeys1 int
 	BaseWeightNonPrintableKeys2 int
 	BaseWeightNonPrintableKeys3 int

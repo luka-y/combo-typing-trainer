@@ -79,9 +79,10 @@ type Layout struct {
 
 	ReverseKeyMap map[rune]KeyWithShift
 
-	LowerLetters []rune
-	UpperLetters []rune
-	Digits       []rune
-	LowerSymbols []rune
-	UpperSymbols []rune
+	LowerLetters      []rune
+	UpperLetters      []rune
+	Digits            []rune
+	UpperDigitSymbols []rune
+	LowerSymbols      []rune
+	UpperSymbols      []rune
 }
