@@ -4,7 +4,6 @@
 micro to-do:
 
 priority 0:
-    logic for populating the config dir only if dir is absent of empty
     populate with 6 following stages
         1) lowercase letters + space
         2) prev + uppercase letters

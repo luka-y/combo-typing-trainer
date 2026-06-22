@@ -20,7 +20,7 @@ installed).
 
 # Configuration
 
-The "stream" is highly configurable. [Example of a config](assets/demo-config.toml).
+The "stream" is highly configurable. [Example of a config](assets/default-configs/demo-config.toml).
 
 In there, you can set:
 

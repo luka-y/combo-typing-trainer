@@ -1,7 +1,7 @@
 # combo-typing-trainer config (TOML v1.1.0)
 # The program requires a single ~/.config/combo-typing-trainer/*.toml (or %USERPROFILE%\.config\combo-typing-trainer\*.toml on Windows).
 # More than one will error, so add `.disabled` or `.inactive` or `.*anything` to each inactive one.
-# If the directory is empty or absent it will populate it with default configs (demo + stages)
+# If the directory has no `.toml` files or absent it will populate it with default configs (demo + stages)
 
 # default demo-config
 

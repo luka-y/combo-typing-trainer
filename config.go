@@ -104,12 +104,33 @@ func ParseConfig() error {
 
 	if tomlFilesCount == 0 {
 		configPath = filepath.Join(configDirPath, "demo-config.toml")
-		defaultConfigBytes, err := assets.ReadFile("assets/demo-config.toml") //os.ReadFile("assets/")
+		demoBytes, err := assets.ReadFile("assets/default-configs/demo-config.toml")
 		if err != nil {
-			return fmt.Errorf("error reading default config: %w", err)
+			return fmt.Errorf("error reading demo config: %w", err)
 		}
-		if err := os.WriteFile(configPath, defaultConfigBytes, 0644); err != nil {
+		if err := os.WriteFile(configPath, demoBytes, 0644); err != nil {
 			return fmt.Errorf("error writing config file (%s): %w", configPath, err)
+		}
+
+		embeddedConfigsDirEntries, err := assets.ReadDir("assets/default-configs")
+		if err != nil {
+			return fmt.Errorf("error reading embedded assets/default-configs dir: %w", err)
+		}
+		var stagesFileNames []string
+		for _, entry := range embeddedConfigsDirEntries {
+			if strings.HasPrefix(entry.Name(), "stage-") && strings.HasSuffix(entry.Name(), "-config.toml.disabled") {
+				stagesFileNames = append(stagesFileNames, entry.Name())
+			}
+		}
+		for _, name := range stagesFileNames {
+			stageBytes, err := assets.ReadFile("assets/default-configs/" + name)
+			if err != nil {
+				return fmt.Errorf("error reading stage config (%s): %w", name, err)
+			}
+			path := filepath.Join(configDirPath, name)
+			if err := os.WriteFile(path, stageBytes, 0644); err != nil {
+				return fmt.Errorf("error writing config file (%s): %w", path, err)
+			}
 		}
 	}
 
