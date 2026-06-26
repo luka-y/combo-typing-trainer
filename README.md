@@ -8,11 +8,7 @@ combinations with modifiers (Ctrl, Alt, Shift, Meta).
 
 Inspired by [Programmer's Typing Practice by climech](https://climech.github.io/typing-practice/).
 
-# Installation
-
-Download the binary from [the latest release](../../releases/latest).
-
-### OR build from source
+# Build from source
 
 Clone the repo and `go build .` (you would need [Go](https://go.dev/) and
 [ebiten dependencies](https://ebitengine.org/en/documents/install.html)
